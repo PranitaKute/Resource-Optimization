@@ -1,0 +1,94 @@
+.container {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.form-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  /* transition: 10s; */
+  width: 300px;
+}
+
+.form-toggle {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.form-toggle button {
+  width: 50%;
+  padding: 10px;
+  background-color: #efeded;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px 10px 5px 5px;
+}
+
+.form-toggle img{
+    width: 18px;
+    height: 18px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.form-toggle .active {
+  background-color: #0066CC;
+  color: white;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  /* overflow: hidden; */
+  transition: all 0.5s ease-in-out;
+}
+
+.form h2 {
+  margin-bottom: 20px;
+}
+
+.form input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.form button {
+  padding: 10px;
+  background-color:#0066CC;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form select{
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.form label{
+    margin-bottom: 5px;
+}
+
+.form a {
+  color: #0066CC;
+  text-decoration: none;
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+.form p {
+  text-align: center;
+}

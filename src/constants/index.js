@@ -1,5 +1,7 @@
 // import { people01, people02, people03, facebook, instagram, linkedin, twitter, airbnb, binance, coinbase, dropbox, send, shield, star  } from "../assets";
-
+import circle1 from '../assets/circle1.png'
+import circle2 from '../assets/circle2.png'
+import circle3 from '../assets/circle3.png'
 export const navLinks = [
   {
     id: "home",
@@ -22,21 +24,21 @@ export const navLinks = [
 export const features = [
   {
     id: "feature-1",
-    // icon: star,
+    icon: circle1,
     title: "Timetable Generation",
     content:
       "Generate optimized schedules with AI-driven accuracy.",
   },
   {
     id: "feature-2",
-    // icon: shield,
+    icon: circle2,
     title: "Faculty Load Balancing",
     content:
       "Distribute teaching workload with AI-driven fairness.",
   },
   {
     id: "feature-3",
-    // icon: send,
+    icon: circle3,
     title: "Optimal Room Allocation",
     content:
       "Assign classrooms and labs efficiently based on availability and capacity.",

@@ -1,6 +1,7 @@
 import './index.css'
 import styles from './style'
 import { Navbar, LandingPage, Features, FAQ, Footer, Login } from './components'
+import Title from './components/Title/Title'
 
 function App() {
 
@@ -25,7 +26,8 @@ function App() {
       {/* Features Section */}
       <div className={`bg-primary ${styles.paddingX} ${styles.flexStart}`}>
         <div className={`${styles.boxWidth}`}>
-            <Features/>
+          <Features/>
+           
         </div>
       </div>
 

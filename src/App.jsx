@@ -1,12 +1,35 @@
 import './App.css'
-import Login from './components/Login'
+import styles from './style'
+import { Navbar, LandingPage, Features, FAQ, Footer, Login } from './components'
 
 function App() {
 
   return (
-    <>
-      <Login/>
-    </>
+    <div className='bg-primary w-full overflow-hidden'>
+      
+      {/* Navbar */}
+      <div className={`${styles.paddingX} ${styles.flexCenter}`}>
+        <div className={`${styles.boxWidth}`}>
+          <Navbar/>
+        </div>
+        <Login/>
+      </div>
+
+      {/* Hero Section */}
+      <div className={`bg-primary ${styles.flexStart}`}>
+        <div className={`${styles.boxWidth}`}>
+          <LandingPage/>
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className={`bg-primary ${styles.paddingX} ${styles.flexStart}`}>
+        <div className={`${styles.boxWidth}`}>
+            <Features/>
+        </div>
+      </div>
+
+    </div>
   )
 }
 

@@ -1,0 +1,146 @@
+.hero{
+    width: 100%;
+    min-height: 100vh;
+    /* background: linear-gradient(rgba(15, 8, 112, 0.7),rgba(0, 30, 58, 0.7)), url('../assets/hero2.jpg'); */
+    background-size: 100% 100% ;
+    background-position: center ;
+    background-repeat: no-repeat;
+    /* color: white; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-text{
+    text-align: left;
+    max-width: 800px;
+}
+
+.hero-text h1{
+    font-size: 60px;
+    font-weight: 600;
+    font-weight: bold;
+}
+
+.hero-text h2{
+    font-weight: bold;
+    font-size: 48px;
+    color: #0066CC;
+}
+
+.hero-text p{
+    max-width: 700px;
+    text-align: left;
+    margin: 10px 0;
+    line-height: 1.4;
+}
+
+.btn {
+  padding: 14px 25px;
+  background-color:#0066CC;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  border: 0;
+  outline: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn img{
+    width: 20px;
+    margin-left: 10px;
+}
+
+.hero-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-right img {
+  /* width: 100%;
+  max-width: 500px;
+  border-radius: 12px; */
+  padding: 2rem;
+}
+.split-image-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+
+.quadrant {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  background-image: url('../assets/hero2.jpg');
+  background-size: 300px 300px;
+  background-repeat: no-repeat;
+  transition: transform 0.3s ease;
+}
+
+.quadrant-1 {
+  top: 0;
+  left: 0;
+  background-position: top left;
+}
+
+.quadrant-2 {
+  top: 0;
+  right: 0;
+  background-position: top right;
+}
+
+.quadrant-3 {
+  bottom: 0;
+  left: 0;
+  background-position: bottom left;
+}
+
+.quadrant-4 {
+  bottom: 0;
+  right: 0;
+  background-position: bottom right;
+}
+
+.split-image-container:hover .quadrant-1 {
+  transform: translate(-10px, -10px);
+}
+
+.split-image-container:hover .quadrant-2 {
+  transform: translate(10px, -10px);
+}
+
+.split-image-container:hover .quadrant-3 {
+  transform: translate(-10px, 10px);
+}
+
+.split-image-container:hover .quadrant-4 {
+  transform: translate(10px, 10px);
+}
+
+
+/* Media query */
+@media(max-width: 850px){
+    .hero-text h1{
+        font-size: 40px;
+    }
+}
+
+@media(max-width: 650px){
+    .hero-text h1{
+        font-size: 30px;
+        max-width: 400px;
+        margin: auto;
+    }
+    
+    .hero-text p{
+        font-size: 14px;
+        margin: 15px auto 30px;
+    } 
+}

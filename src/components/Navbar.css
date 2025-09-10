@@ -33,7 +33,32 @@ li {
 
 li a {
   text-decoration: none;
+  text-transform: capitalize;
   color: inherit;
+  font-size: 18px;
+  font-weight: 400;
+  padding: 0 10px;
+  margin: 0 30px;
+  position: relative;
+}
+
+li a:hover{
+  color: #b7d3ef;
+}
+
+li a::before{
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background-color: aliceblue;
+  transition: all .5s;
+}
+
+li a:hover::before{
+  width: 100%;
 }
 
 /* Desktop navbar */

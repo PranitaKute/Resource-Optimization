@@ -1,4 +1,4 @@
-import './App.css'
+import './index.css'
 import styles from './style'
 import { Navbar, LandingPage, Features, FAQ, Footer, Login } from './components'
 
@@ -12,7 +12,7 @@ function App() {
         <div className={`${styles.boxWidth}`}>
           <Navbar/>
         </div>
-        <Login/>
+        {/* <Login/> */}
       </div>
 
       {/* Hero Section */}

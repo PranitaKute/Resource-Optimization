@@ -1,5 +1,5 @@
 import Navbar from './Navbar';
-import LandingPage from './LandingPage';
+import LandingPage from './LandingPage/LandingPage';
 import Features from './Features';
 import HowItWorks from './HowItWorks';
 import Ready from './Ready';

@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import './Login.css'
-import login from '../assets/login.png'
-import register from '../assets/add.png'
+import React, { useState } from 'react';
+import './Login.css';
+import login from '../../assets/login.png';
+import register from '../../assets/add.png';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);

@@ -1,5 +1,5 @@
 import React from 'react';
-import Title from './Title/Title';
+import Title from '../Title/Title.jsx';
 import './HowItWorks.css';
 import {HowItWorks as HowItWorksData} from '../../constants/index.js'
 

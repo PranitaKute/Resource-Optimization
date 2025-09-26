@@ -15,11 +15,11 @@ export const navLinks = [
     title: "Features",
   },
   {
-    id: "How it works",
+    id: "how-it-works",
     title: "How it works",
   },
   {
-    id: "FAQ",
+    id: "faq",
     title: "FAQ",
   },
 ];

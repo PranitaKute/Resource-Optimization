@@ -16,8 +16,15 @@ nav {
   left: 0;
   z-index: 10;
   position: fixed;      /*relative*/
-  background-color: #0066CC;
+  background-color: rgba(0,102,204,0.92);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }    
+
+.navbar.scrolled{
+  background-color: rgba(0,102,204,0.98);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
 
 ul {
   list-style: none;
@@ -37,8 +44,8 @@ li a {
   color: inherit;
   font-size: 18px;
   font-weight: 400;
-  padding: 0 10px;
-  margin: 0 30px;
+  padding: 0 8px;
+  margin: 0 12px;
   position: relative;
 }
 
@@ -46,20 +53,24 @@ li a:hover{
   color: #b7d3ef;
 }
 
-li a::before{
+.navbar a.active{ color: #b7d3ef; }
+
+.navbar ul li a { position: relative; }
+.navbar ul li a::after{
   content: '';
   position: absolute;
-  bottom: -10px;
-  left: 0;
-  width: 0;
-  height: 3px;
-  background-color: aliceblue;
-  transition: all .5s;
+  left: 10px;
+  right: 10px;
+  bottom: -8px;
+  height: 2px;
+  background: #b7d3ef;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
 }
+.navbar ul li:hover a::after, .navbar a.active::after{ transform: scaleX(1); }
 
-li a:hover::before{
-  width: 100%;
-}
+/* removed extra underline to avoid double line under links */
 
 /* Desktop navbar */
 .navbar ul {
@@ -70,7 +81,7 @@ li a:hover::before{
 }
 
 .navbar ul li {
-  margin-right: 40px; /* mr-10 */
+  margin-right: 18px; /* tighter gap between items */
 }
 
 .navbar ul li:last-child {

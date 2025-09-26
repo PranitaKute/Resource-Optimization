@@ -11,12 +11,16 @@ const LandingPage = () => {
         <h1>Resource Optimization Dashboard</h1>
         <h2>Powered by AI</h2>
         <p>An AI-powered platform to simplify scheduling, optimize resources, and balance workloads efficiently. </p>
-        <button className='btn'>Explore More <img src={next} alt=''/></button>
+        <div className='cta-row'>
+          <a className='btn primary' href='#features'>Explore More <img src={next} alt=''/></a>
+          <a className='btn ghost' href='/login'>Login</a>
+          <a className='btn ghost' href='/register'>Register</a>
+        </div>
       </div>
 
       {/* Right side */}
         <div className='hero-right'>
-          <img src={hero2} alt="dashboard preview" />
+          <img className='floating' src={hero2} alt="dashboard preview" />
           {/* <div className="split-image-container">
           <div className="quadrant quadrant-1"></div>
           <div className="quadrant quadrant-2"></div>

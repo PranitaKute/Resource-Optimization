@@ -12,7 +12,7 @@ function App() {
         <div className={`${styles.boxWidth}`}>
           <Navbar/>
         </div>
-        {/* <Login/> */}
+        <Login/>
       </div>
 
       {/* Hero Section */}

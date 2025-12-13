@@ -1,11 +1,19 @@
+/* ================================
+   GOOGLE FONT
+================================ */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+
+/* ================================
+   TAILWIND BASE + COMPONENTS + UTILS
+================================ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
+/* ================================
+   DESIGN SYSTEM (COLORS, GRADIENTS, SHADOWS)
+   ALL COLORS MUST BE HSL
+================================ */
 @layer base {
   :root {
     --background: 220 25% 97%;
@@ -19,7 +27,7 @@ All colors MUST be HSL.
 
     --primary: 210 100% 45%;
     --primary-foreground: 0 0% 100%;
-    
+
     --primary-glow: 195 100% 55%;
 
     --secondary: 220 20% 92%;
@@ -41,20 +49,33 @@ All colors MUST be HSL.
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 45%) 0%, hsl(195 100% 55%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(220 25% 97%) 0%, hsl(210 40% 98%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(220 25% 98%) 100%);
-    
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(210 100% 45%) 0%,
+      hsl(195 100% 55%) 100%
+    );
+    --gradient-hero: linear-gradient(
+      180deg,
+      hsl(220 25% 97%) 0%,
+      hsl(210 40% 98%) 100%
+    );
+    --gradient-card: linear-gradient(
+      145deg,
+      hsl(0 0% 100%) 0%,
+      hsl(220 25% 98%) 100%
+    );
+
     /* Shadows */
     --shadow-sm: 0 2px 8px -2px hsl(210 100% 45% / 0.08);
     --shadow-md: 0 8px 24px -4px hsl(210 100% 45% / 0.12);
     --shadow-lg: 0 16px 48px -8px hsl(210 100% 45% / 0.16);
     --shadow-glow: 0 0 40px hsl(195 100% 55% / 0.3);
-    
-    /* Animations */
+
+    /* Animation timing */
     --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
+    /* Sidebar */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -65,6 +86,9 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* ================================
+      DARK MODE
+  ================================ */
   .dark {
     --background: 220 25% 8%;
     --foreground: 220 15% 95%;
@@ -77,7 +101,7 @@ All colors MUST be HSL.
 
     --primary: 210 100% 55%;
     --primary-foreground: 220 25% 8%;
-    
+
     --primary-glow: 195 100% 65%;
 
     --secondary: 220 20% 18%;
@@ -95,12 +119,24 @@ All colors MUST be HSL.
     --border: 220 20% 22%;
     --input: 220 20% 22%;
     --ring: 210 100% 55%;
-    
-    /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 55%) 0%, hsl(195 100% 65%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(220 25% 8%) 0%, hsl(220 25% 12%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(220 20% 12%) 0%, hsl(220 20% 14%) 100%);
-    
+
+    /* Dark gradients */
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(210 100% 55%) 0%,
+      hsl(195 100% 65%) 100%
+    );
+    --gradient-hero: linear-gradient(
+      180deg,
+      hsl(220 25% 8%) 0%,
+      hsl(220 25% 12%) 100%
+    );
+    --gradient-card: linear-gradient(
+      145deg,
+      hsl(220 20% 12%) 0%,
+      hsl(220 20% 14%) 100%
+    );
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -110,14 +146,20 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-}
 
-@layer base {
+  /* ================================
+      BASE STYLES
+  ================================ */
   * {
     @apply border-border;
+    font-family: "Outfit", sans-serif;
   }
 
   body {
     @apply bg-background text-foreground;
   }
 }
+html {
+  scroll-behavior: smooth;
+}
+

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useAppContext } from "../context/AppContext";
+import { toast } from "react-toastify";
 
 function alphaIndex(n) {
   return String.fromCharCode(64 + n);
@@ -12,8 +13,8 @@ export default function TeacherForm({
   yearData,
 }) {
   const { axios } = useAppContext();
-  const [teacherUsers, setTeacherUsers] = useState([]); // 👈 teachers from users table
-  const [selectedTeacher, setSelectedTeacher] = useState(""); // 👈 dropdown value
+  const [teacherUsers, setTeacherUsers] = useState([]); // teachers from users table
+  const [selectedTeacher, setSelectedTeacher] = useState(""); // dropdown value
 
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [selectedYearsLocal, setSelectedYearsLocal] = useState([]);
@@ -29,9 +30,9 @@ export default function TeacherForm({
   useEffect(() => {
     const loadTeachers = async () => {
       try {
-        const res = await axios.get("/api/admin/users"); // ✅ EXISTING API
+        const res = await axios.get("/api/admin/users"); // EXISTING API
 
-        // ✅ FILTER ONLY TEACHERS (frontend only)
+        // FILTER ONLY TEACHERS (frontend only)
         const teachersOnly = res.data.users.filter((u) => u.role === "teacher");
 
         setTeacherUsers(teachersOnly);
@@ -114,14 +115,32 @@ export default function TeacherForm({
   function saveTeacher() {
     setError("");
 
-    if (!selectedTeacher) return setError("Select a teacher");
-    if (selectedSubjects.length === 0)
-      return setError("Select at least one subject");
-    if (selectedYearsLocal.length === 0) return setError("Select years");
+
+    // if (!selectedTeacher) return setError("Select a teacher");
+    // if (selectedSubjects.length === 0)
+    //   return setError("Select at least one subject");
+    // if (selectedYearsLocal.length === 0) return setError("Select years");
+
+    // Change 24.12.2025
+    if (!selectedTeacher) {
+      toast.error("Please select a teacher");
+      return;
+    }
+
+    if (selectedSubjects.length === 0) {
+      toast.error("Select at least one subject");
+      return;
+    }
+
+    if (selectedYearsLocal.length === 0) {
+      toast.error("Select at least one year");
+      return;
+    }
 
     for (const yr of selectedYearsLocal) {
       if (!divisionsByYear[yr] || divisionsByYear[yr].length === 0) {
-        return setError(`Select divisions for ${yr}`);
+        toast.error(`Select divisions for ${yr}`);
+        return;
       }
     }
 
@@ -130,7 +149,7 @@ export default function TeacherForm({
     const teacherObj = {
       id: editingId || Date.now(),
       teacherId: teacherUser._id,
-      name: teacherUser.name, // 👈 ONLY NAME
+      name: teacherUser.name, // ONLY NAME
       subjects: selectedSubjects,
       years: selectedYearsLocal,
       divisions: divisionsByYear,
@@ -143,6 +162,13 @@ export default function TeacherForm({
       setEditingId(null);
     } else {
       setTeachers([...teachers, teacherObj]);
+    }
+
+    // Change Add toast 24.12.2025
+    if (editingId) {
+      toast.success("Teacher assignment updated successfully");
+    } else {
+      toast.success("Teacher added successfully");
     }
 
     // Reset
@@ -169,6 +195,7 @@ export default function TeacherForm({
 
   function deleteTeacher(id) {
     setTeachers(teachers.filter((t) => t.id !== id));
+    toast.info("Teacher removed");
   }
 
   // =====================================================
@@ -297,7 +324,7 @@ export default function TeacherForm({
       </div>
 
       {/* List */}
-      <h3 className="font-semibold mb-2">Teachers Added</h3>
+      {/* <h3 className="font-semibold mb-2">Teachers Added</h3>
 
       {teachers.map((t) => (
         <div key={t.id} className="border p-3 rounded mb-2 bg-white">
@@ -306,7 +333,69 @@ export default function TeacherForm({
             Subjects: {t.subjects.map((s) => s.code).join(", ")}
           </div>
         </div>
-      ))}
+      ))} */}
+
+
+
+      {/* Make table to display teachers instead of card: Change 24.12.2025 */}
+      {/* List */}
+      <h3 className="font-semibold mb-2">Teachers Added</h3>
+
+      {teachers.length === 0 ? (
+        <p className="text-gray-500">No teachers added yet.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full border border-gray-300 text-sm bg-white">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border p-2 text-left">Sr No</th>
+                <th className="border p-2 text-left">Teacher Name</th>
+                <th className="border p-2 text-left">Subjects</th>
+                <th className="border p-2 text-left">Years</th>
+                <th className="border p-2 text-center">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {[...teachers]
+                .sort((a, b) => a.name.localeCompare(b.name)) // Alphabetical order
+                .map((t, index) => (
+                  <tr key={t.id} className="hover:bg-gray-50">
+                    <td className="border p-2">{index + 1}</td>
+
+                    <td className="border p-2 font-medium">
+                      {t.name}
+                    </td>
+
+                    <td className="border p-2">
+                      {t.subjects.map((s) => s.code).join(", ")}
+                    </td>
+
+                    <td className="border p-2">
+                      {t.years.join(", ")}
+                    </td>
+
+                    <td className="border p-2 text-center space-x-2">
+                      <button
+                        onClick={() => editTeacher(t)}
+                        className="text-blue-600 hover:underline"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteTeacher(t.id)}
+                        className="text-red-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
     </div>
   );
 }

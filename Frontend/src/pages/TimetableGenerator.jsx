@@ -98,7 +98,7 @@ export default function TimetableGenerator() {
           {/* IMPORT JSON BOX */}
           <div className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-400 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white text-2xl">📥</span>
               </div>
               <h2 className="text-2xl font-semibold text-gray-800">
@@ -112,8 +112,7 @@ export default function TimetableGenerator() {
 
             <button
               onClick={() => setShowImportBox(!showImportBox)}
-              className="w-full px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-400 text-white rounded-xl font-semibold shadow-lg hover:shadow-2xl transition-all flex items-center justify-center gap-2"
-            >
+              className="mt-6 w-full px-6 py-4 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-xl font-semibold shadow-lg hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed">
               📄 {showImportBox ? "Hide Import Options" : "Import JSON Data"}
             </button>
 

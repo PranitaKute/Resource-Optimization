@@ -14,11 +14,13 @@ import connectDB from "./config/mongodb.js";
 // Old Routes
 import schedulerRoutes from "./routes/schedulerRoutes.js";
 import adminRoutes from "./routes/admin.js";
+import teacherRoutes from "./routes/teacherRoutes.js";    // Change 24.12.2025
 
 // New Auth Routes
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import timetableRoutes from "./routes/timetableRoutes.js";
+
 
 // ----------------------------------------------
 // INIT
@@ -77,6 +79,7 @@ app.use("/api/scheduler", schedulerRoutes);
 
 app.use("/api/timetable", timetableRoutes);
 
+app.use("/api/teacher", teacherRoutes);   //change 21.12.2025
 
 // ----------------------------------------------
 // START SERVER

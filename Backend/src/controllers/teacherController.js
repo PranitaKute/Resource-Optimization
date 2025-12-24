@@ -11,5 +11,10 @@ export const addTeacher = (req, res) => {
 };
 
 export const getTeachers = (req, res) => {
-  res.json(teachers);
+  // res.json(teachers);
+  // change 24.12.2025
+  res.json({
+  success: true,
+  teachers,
+});
 };

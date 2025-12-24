@@ -6,7 +6,21 @@ import {
 
 const router = express.Router();
 
-router.post("/add", addTeacher);
-router.get("/", getTeachers);
+console.log("teacherRoutes.js loaded");   //change 24.12.2025
+
+// router.post("/add", addTeacher);
+// ADD TEACHER ROUTE CHECK
+router.post("/add", (req, res, next) => {
+  console.log("POST /api/teacher/add HIT");
+  next();
+}, addTeacher);
+
+
+// router.get("/", getTeachers);
+// GET TEACHERS ROUTE CHECK
+router.get("/", (req, res, next) => {
+  console.log(" GET /api/teacher HIT");
+  next();
+}, getTeachers);
 
 export default router;

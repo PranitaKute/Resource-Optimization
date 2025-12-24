@@ -1,4 +1,20 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+
+// Room numbers
+const ROOM_OPTIONS = [
+  "B101",
+  "B102",
+  "B103",
+  "B104",
+  "B105",
+  "B106",
+  "B107",
+  "B108",
+  "B109",
+  "B110",
+];
+
 
 export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGenerate }) {
   const [roomName, setRoomName] = useState("");
@@ -8,8 +24,15 @@ export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGe
   // Removed the useEffect auto-generation logic to respect manual input only
 
   const addRoom = () => {
-    if (!roomName.trim()) return alert("Enter room name");
-    if (rooms.find(r => r.name === roomName)) return alert("Room already exists");
+    if (!roomName){
+      toast.error("Select a room");
+      return;
+    }
+    
+    if (rooms.find(r => r.name === roomName)){
+      toast.error("Room already exists");
+      return;
+    } 
     
     const newRoom = {
       id: Date.now().toString(),
@@ -21,10 +44,15 @@ export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGe
     
     setRooms([...rooms, newRoom]);
     setRoomName("");
+
+    toast.success("Room added successfully");
   };
 
   const removeRoom = (id) => {
-    setRooms(rooms.filter(r => r.id !== id));
+    if (!window.confirm("Are you sure you want to remove this room?")) return;
+
+    setRooms(rooms.filter((r) => r.id !== id));
+    toast.success("Room removed successfully");
   };
 
   return (
@@ -36,13 +64,35 @@ export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGe
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-6 bg-blue-50/50 rounded-xl border border-blue-100">
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">Room Name</label>
-          <input 
+          {/* <input 
             type="text" 
             className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-400"
             value={roomName}
             onChange={(e) => setRoomName(e.target.value)}
             placeholder="e.g. Lab 101"
-          />
+          /> */}
+
+
+          {/* Dropdown instead of input */}
+          <select
+            className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-400"
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+          >
+            <option value="">Select Room</option>
+
+            {ROOM_OPTIONS.map((room) => (
+              <option
+                key={room}
+                value={room}
+                disabled={rooms.some((r) => r.name === room)}
+              >
+                {room}
+              </option>
+            ))}
+          </select>
+
+
         </div>
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">Type</label>

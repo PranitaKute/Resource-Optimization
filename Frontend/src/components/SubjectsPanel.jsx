@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+
 
 export default function SubjectsPanel({ year, yearData, setYearData }) {
   const [subject, setSubject] = useState({
@@ -10,8 +12,13 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
   });
 
   function addSubject() {
+    // if (!subject.code.trim() || !subject.name.trim()) {
+    //   alert("Code & Name required");
+    //   return;
+    // }
+    //Toast
     if (!subject.code.trim() || !subject.name.trim()) {
-      alert("Code & Name required");
+      toast.error("Subject code and name are required");
       return;
     }
 
@@ -22,7 +29,17 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
       [year]: { ...prev[year], subjects: updated },
     }));
 
-    setSubject({ code: "", name: "", type: "Theory", hours: "", batches: 1 });
+    // Add toast 24.12.2025
+    toast.success(
+      `${subject.code} - ${subject.name} added successfully`
+    );
+
+    setSubject({ 
+      code: "", 
+      name: "", 
+      type: "Theory", 
+      hours: "", 
+      batches: 1 });
   }
 
   function removeSubject(index) {
@@ -134,7 +151,7 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
 
         <button
           onClick={addSubject}
-          className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-400 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
+          className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
         >
           <span className="text-xl">+</span>
           Add Subject

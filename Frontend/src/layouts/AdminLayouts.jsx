@@ -43,7 +43,7 @@ export default function AdminLayout() {
       path: "/admin/add-teacher",
       icon: assets.add_icon,
     },
-     {
+    {
       name: "Add Room",
       path: "/admin/add-room",
       icon: assets.room_icon, // or use a Lucide icon like <Building2 size={20} />
@@ -73,7 +73,7 @@ export default function AdminLayout() {
       </header>
 
       {/* ================= SIDEBAR ================= */}
-      <aside className="fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] w-64 bg-white border-r overflow-y-auto mt-2">
+      <aside className="fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] w-64 bg-white border-r overflow-y-auto">
         {sidebar.map((item) => (
           <NavLink
             key={item.name}
@@ -93,7 +93,9 @@ export default function AdminLayout() {
       </aside>
 
       {/* ================= CONTENT ================= */}
-      <main className="pt-16 pl-64 p-6">
+      <main className="pt-16 pl-64 pb-6">
+        {/* <main className="pt-16 pl-64 pr-6 pb-6"> */}
+
         <Outlet />
       </main>
     </div>

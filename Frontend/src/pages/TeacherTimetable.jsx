@@ -37,32 +37,34 @@ export default function TeacherTimetable() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Teacher Timetables</h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 px-8 py-10">
+      <div className="p-6 max-w-6xl mx-auto">
+        <h2 className="text-2xl font-bold mb-6">Teacher Timetables</h2>
 
-      {teacherTTs.length === 0 && <p>No teacher timetables found.</p>}
+        {teacherTTs.length === 0 && <p>No teacher timetables found.</p>}
 
-      {teacherTTs.map((tt) => (
-        <div
-          key={tt.teacher}
-          className="border p-4 mb-6 bg-white rounded shadow-md"
-        >
-          <div className="flex justify-between mb-2">
-            <h3 className="font-bold text-lg">{tt.teacher}</h3>
+        {teacherTTs.map((tt) => (
+          <div
+            key={tt.teacher}
+            className="border p-4 mb-6 bg-white rounded shadow-md"
+          >
+            <div className="flex justify-between mb-2">
+              <h3 className="font-bold text-lg">{tt.teacher}</h3>
 
-            <div className="flex gap-2">
-              <button
-                onClick={() => downloadCSV(tt.timetable, tt.teacher)}
-                className="px-3 py-1 bg-gray-700 text-white rounded text-sm"
-              >
-                Download
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => downloadCSV(tt.timetable, tt.teacher)}
+                  className="px-3 py-1 bg-gray-700 text-white rounded text-sm"
+                >
+                  Download
+                </button>
+              </div>
             </div>
-          </div>
 
-          <TeacherTable data={tt.timetable} />
-        </div>
-      ))}
+            <TeacherTable data={tt.timetable} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -132,10 +134,13 @@ function downloadCSV(table, filename) {
             const div = entry.division || "";
             const room = entry.room || "";
 
-            const extra =
-              [yr && `Y:${yr}`, div && `Div:${div}`, room && `R:${room}`]
-                .filter(Boolean)
-                .join(" ");
+            const extra = [
+              yr && `Y:${yr}`,
+              div && `Div:${div}`,
+              room && `R:${room}`,
+            ]
+              .filter(Boolean)
+              .join(" ");
 
             return extra ? `${subj} (${extra})` : subj;
           })
@@ -204,4 +209,3 @@ function TeacherTable({ data }) {
     </table>
   );
 }
-

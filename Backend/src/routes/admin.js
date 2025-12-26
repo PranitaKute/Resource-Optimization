@@ -1,5 +1,5 @@
 import express from "express";
-import { addTeacher } from "../controllers/adminController.js";
+import { addTeacher, deleteTeacher, updateTeacher } from "../controllers/adminController.js";
 import userModel from "../models/userModel.js";
 
 const router = express.Router();
@@ -72,5 +72,8 @@ router.get("/users", async (req, res) => {
 });
 
 router.post("/add-teacher", addTeacher);
+
+router.put("/update-teacher/:id", updateTeacher);
+router.delete("/delete-teacher/:id", deleteTeacher);
 
 export default router;

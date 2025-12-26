@@ -66,10 +66,13 @@ export default function SavedTimetable() {
               const div = entry.division || "";
               const room = entry.room || "";
 
-              const extra =
-                [yr && `Y:${yr}`, div && `Div:${div}`, room && `R:${room}`]
-                  .filter(Boolean)
-                  .join(" ");
+              const extra = [
+                yr && `Y:${yr}`,
+                div && `Div:${div}`,
+                room && `R:${room}`,
+              ]
+                .filter(Boolean)
+                .join(" ");
 
               return extra
                 ? `${subj} (${teach} ${extra})`
@@ -98,48 +101,50 @@ export default function SavedTimetable() {
     );
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Saved Timetables</h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 py-10">
+      <div className="p-6 max-w-6xl mx-auto">
+        <h2 className="text-2xl font-bold mb-6">Saved Timetables</h2>
 
-      {timetables.length === 0 && <p>No saved timetables found.</p>}
+        {timetables.length === 0 && <p>No saved timetables found.</p>}
 
-      {timetables.map((item) => (
-        <div
-          key={item._id}
-          className="border p-4 mb-6 bg-white rounded shadow-md"
-        >
-          <div className="flex justify-between mb-2">
-            <h3 className="font-bold text-lg">
-              {item.year} – Division {item.division}
-            </h3>
+        {timetables.map((item) => (
+          <div
+            key={item._id}
+            className="border p-4 mb-6 bg-white rounded shadow-md"
+          >
+            <div className="flex justify-between mb-2">
+              <h3 className="font-bold text-lg">
+                {item.year} – Division {item.division}
+              </h3>
 
-            {/* ACTION BUTTONS */}
-            <div className="flex gap-2">
-              <button
-                onClick={() =>
-                  downloadCSV(
-                    item.timetableData,
-                    `${item.year}_Div${item.division}`
-                  )
-                }
-                className="px-3 py-1 bg-gray-700 text-white rounded text-sm"
-              >
-                Download
-              </button>
+              {/* ACTION BUTTONS */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() =>
+                    downloadCSV(
+                      item.timetableData,
+                      `${item.year}_Div${item.division}`
+                    )
+                  }
+                  className="px-3 py-1 bg-gray-700 text-white rounded text-sm"
+                >
+                  Download
+                </button>
 
-              <button
-                onClick={() => deleteTimetable(item._id)}
-                className="px-3 py-1 bg-red-600 text-white rounded text-sm"
-              >
-                Delete
-              </button>
+                <button
+                  onClick={() => deleteTimetable(item._id)}
+                  className="px-3 py-1 bg-red-600 text-white rounded text-sm"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
 
-          {/* TABLE RENDERING */}
-          <TableViewer data={item.timetableData} />
-        </div>
-      ))}
+            {/* TABLE RENDERING */}
+            <TableViewer data={item.timetableData} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

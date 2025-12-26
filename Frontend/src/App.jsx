@@ -29,6 +29,7 @@ import { Navbar } from "./components/Navbar";
 import ScrollToHash from "./components/ScrolltoHash";
 import AddTeacher from "./pages/AddTeacher";
 import IndividualTeacherTimetable from "./pages/IndividualTimetable";
+import AddRoom from "./pages/AddRoom";
 
 export default function App() {
   const { isAdmin, isLoggedIn } = useAppContext();
@@ -54,10 +55,11 @@ export default function App() {
           path="/admin"
           element={isAdmin ? <AdminLayout /> : <AdminLogin />}
         >
-          <Route path="/admin/add-teacher" element={<AddTeacher />} />
           <Route path="dashboard" element={<TimetableGenerator />} />
           <Route path="saved" element={<SavedTimetable />} />
           <Route path="teachers" element={<TeacherTimetable />} />
+          <Route path="add-teacher" element={<AddTeacher />} />
+          <Route path="add-room" element={<AddRoom />} /> {/* ADD THIS LINE */}
           <Route path="edit-timetable" element={<EditTimetable />} />
         </Route>
 

@@ -1,51 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Added useEffect import
 import { toast } from "react-toastify";
-
-// Room numbers
-const ROOM_OPTIONS = [
-  "B101",
-  "B102",
-  "B103",
-  "B104",
-  "B105",
-  "B106",
-  "B107",
-  "B108",
-  "B109",
-  "B110",
-];
-
+import { useAppContext } from "../context/AppContext";
 
 export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGenerate }) {
-  const [roomName, setRoomName] = useState("");
+  const { axios } = useAppContext();
+  const [dbRooms, setDbRooms] = useState([]); // Database rooms
+  const [selectedRoomId, setSelectedRoomId] = useState("");
+  
+  // State for manual overrides if needed (referenced in your UI)
   const [roomType, setRoomType] = useState("Classroom");
   const [capacity, setCapacity] = useState(60);
 
-  // Removed the useEffect auto-generation logic to respect manual input only
+  // Fetch rooms from database on component mount
+  useEffect(() => {
+    const fetchDbRooms = async () => {
+      try {
+        const { data } = await axios.get("/api/rooms/all");
+        if (data.success) {
+          setDbRooms(data.rooms);
+        }
+      } catch (err) {
+        console.error("Failed to fetch rooms:", err);
+        toast.error("Failed to load rooms from database");
+      }
+    };
+    fetchDbRooms();
+  }, [axios]);
 
   const addRoom = () => {
-    if (!roomName){
-      toast.error("Select a room");
-      return;
+    const roomObj = dbRooms.find(r => r._id === selectedRoomId);
+    if (!roomObj) return toast.error("Select a room from the list");
+    
+    // Check for duplicates in the current selection
+    if (rooms.find(r => r.name === roomObj.name)) {
+      return toast.error("Room already added to this schedule");
     }
     
-    if (rooms.find(r => r.name === roomName)){
-      toast.error("Room already exists");
-      return;
-    } 
+    // Add room to the list. We include properties from the DB room 
+    // but keep your UI structure (using 'id' for removal logic)
+    setRooms([...rooms, { 
+      ...roomObj, 
+      id: roomObj._id 
+    }]);
     
-    const newRoom = {
-      id: Date.now().toString(),
-      name: roomName,
-      type: roomType,
-      capacity: capacity,
-      assignedTo: "" // User can manually type assignment if needed
-    };
-    
-    setRooms([...rooms, newRoom]);
-    setRoomName("");
-
-    toast.success("Room added successfully");
+    setSelectedRoomId("");
+    toast.success("Room added to selection");
   };
 
   const removeRoom = (id) => {
@@ -64,58 +63,21 @@ export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGe
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-6 bg-blue-50/50 rounded-xl border border-blue-100">
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">Room Name</label>
-          {/* <input 
-            type="text" 
-            className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-400"
-            value={roomName}
-            onChange={(e) => setRoomName(e.target.value)}
-            placeholder="e.g. Lab 101"
-          /> */}
-
-
-          {/* Dropdown instead of input */}
-          <select
-            className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-400"
-            value={roomName}
-            onChange={(e) => setRoomName(e.target.value)}
+          <select 
+            className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-400 bg-white"
+            value={selectedRoomId}
+            onChange={(e) => setSelectedRoomId(e.target.value)}
           >
             <option value="">Select Room</option>
-
-            {ROOM_OPTIONS.map((room) => (
-              <option
-                key={room}
-                value={room}
-                disabled={rooms.some((r) => r.name === room)}
-              >
-                {room}
+            {dbRooms.map((r) => (
+              <option key={r._id} value={r._id}>
+                {r.name} ({r.type})
               </option>
             ))}
           </select>
+        </div>
 
-
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Type</label>
-          <select 
-            className="w-full px-4 py-2 rounded-lg border"
-            value={roomType}
-            onChange={(e) => setRoomType(e.target.value)}
-          >
-            <option value="Classroom">Classroom</option>
-            <option value="Lab">Lab</option>
-            <option value="Tutorial">Tutorial Room</option>
-          </select>
-          
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Capacity</label>
-          <input 
-            type="number" 
-            className="w-full px-4 py-2 rounded-lg border"
-            value={capacity}
-            onChange={(e) => setCapacity(e.target.value)}
-          />
-        </div>
+      
         <div className="flex items-end">
           <button 
             onClick={addRoom}
@@ -145,7 +107,7 @@ export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGe
           </div>
         ))}
         {rooms.length === 0 && (
-          <p className="text-center text-gray-400 py-10">No rooms added. Please add rooms above.</p>
+          <p className="text-center text-gray-400 py-10">No rooms added. Please select rooms above.</p>
         )}
       </div>
 

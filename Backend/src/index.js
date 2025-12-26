@@ -20,7 +20,7 @@ import teacherRoutes from "./routes/teacherRoutes.js";    // Change 24.12.2025
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import timetableRoutes from "./routes/timetableRoutes.js";
-
+import roomRoutes from "./routes/roomRoutes.js";
 
 // ----------------------------------------------
 // INIT
@@ -80,6 +80,9 @@ app.use("/api/scheduler", schedulerRoutes);
 app.use("/api/timetable", timetableRoutes);
 
 app.use("/api/teacher", teacherRoutes);   //change 21.12.2025
+
+// Adding room routes
+app.use("/api/rooms", roomRoutes);
 
 // ----------------------------------------------
 // START SERVER

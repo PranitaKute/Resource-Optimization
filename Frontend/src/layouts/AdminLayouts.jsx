@@ -17,7 +17,7 @@ export default function AdminLayout() {
       } else {
         toast.error(data.message);
       }
-    } catch (err) {
+    } catch (error) {
       toast.error("Logout failed");
     }
   };
@@ -43,57 +43,59 @@ export default function AdminLayout() {
       path: "/admin/add-teacher",
       icon: assets.add_icon,
     },
+     {
+      name: "Add Room",
+      path: "/admin/add-room",
+      icon: assets.room_icon, // or use a Lucide icon like <Building2 size={20} />
+    },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* TOP NAVBAR - FIXED with consistent logo */}
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white shadow-sm">
-        <Link to="/" className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">R</span>
+    <div className="min-h-screen bg-gray-50">
+      {/* ================= NAVBAR ================= */}
+      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b shadow-sm flex items-center justify-between px-6">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+            R
           </div>
-          <span className="font-bold text-xl text-gray-800">ResourceOPT</span>
+          <span className="font-bold text-lg text-gray-800">ResourceOPT</span>
         </Link>
 
-        <div className="flex items-center gap-5 text-gray-600">
-          <p>Hi, Admin</p>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-600">Hi, Admin</span>
           <button
             onClick={handleLogout}
-            className="border rounded-full text-sm px-4 py-1 hover:bg-gray-100"
+            className="border rounded-full px-4 py-1 text-sm hover:bg-gray-100"
           >
             Logout
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Add padding-top to account for fixed navbar */}
-      <div className="flex pt-16">
-        {/* SIDEBAR - FIXED */}
-        <div className="fixed left-0 top-16 h-[calc(100vh-4rem)] md:w-64 w-16 border-r bg-white z-40 pt-4 text-base flex flex-col overflow-y-auto">
-          {sidebar.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 ${
-                  isActive
-                    ? "border-r-4 bg-blue-100 border-blue-600 text-blue-600"
-                    : "hover:bg-gray-100"
-                }`
-              }
-            >
-              <img src={item.icon} className="w-7 h-7" alt={item.name} />
-              <p className="hidden md:block">{item.name}</p>
-            </NavLink>
-          ))}
-        </div>
+      {/* ================= SIDEBAR ================= */}
+      <aside className="fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] w-64 bg-white border-r overflow-y-auto mt-2">
+        {sidebar.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.path}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 transition ${
+                isActive
+                  ? "bg-blue-100 border-r-4 border-blue-600 text-blue-600"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`
+            }
+          >
+            <img src={item.icon} alt={item.name} className="w-6 h-6" />
+            <span className="font-medium">{item.name}</span>
+          </NavLink>
+        ))}
+      </aside>
 
-        {/* CONTENT - Add margin to account for fixed sidebar */}
-        <div className="flex-1 md:ml-64 ml-16 p-4 md:p-8">
-          <Outlet />
-        </div>
-      </div>
+      {/* ================= CONTENT ================= */}
+      <main className="pt-16 pl-64 p-6">
+        <Outlet />
+      </main>
     </div>
   );
 }

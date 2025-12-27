@@ -99,12 +99,29 @@ export const Navbar = () => {
                       Verify Email
                     </button>
                   )}
-                  <button
+                  {/* <button
                     onClick={logout}
                     className="px-4 py-2 w-full text-left text-red-500"
                   >
                     Logout
-                  </button>
+                  </button> */}
+                  <div className="flex flex-col gap-2">
+                    {/* NEW PROFILE SETUP BUTTON */}
+                    <button 
+                      onClick={() => navigate('/profile-setup')}
+                      className="px-4 py-2 text-sm"
+                    >
+                      Profile
+                    </button>
+
+                    <button 
+                      onClick={logout} 
+                      // i want to make this button take full height , do not want keep small gap below.
+                      className="px-4 py-2 text-sm bg-red-50 text-red-600"
+                    >
+                      Logout
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (

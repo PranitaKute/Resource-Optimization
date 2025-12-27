@@ -18,6 +18,15 @@ export const AppProvider = ({ children }) => {
 
   const backendURL = import.meta.env.VITE_BACKEND_URL;
 
+  useEffect(() => {
+    if (userData && userData.role === 'student') {
+      // If essential academic details are missing, force redirect to setup
+      if (!userData.year || !userData.division) {
+        navigate('/profile-setup');
+      }
+    }
+  }, [userData, navigate]);
+
   // ==========================================
   // CHECK USER AUTH
   // ==========================================

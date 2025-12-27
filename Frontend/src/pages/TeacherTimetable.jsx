@@ -1,67 +1,72 @@
+// src/pages/TeacherTimetable.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Navbar } from "../components/Navbar";
 
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-const PERIODS = [1, 2, 3, 4, 5, 6];
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function TeacherTimetable() {
   const [teacherTTs, setTeacherTTs] = useState([]);
+  const [globalConfig, setGlobalConfig] = useState({ activeDays: [], maxPeriods: [] }); // Track institutional days/periods
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAndBuild = async () => {
       try {
-        // Reuse the same data source as "View Timetables"
         const res = await axios.get("http://localhost:5000/api/timetable/all");
         if (res.data.success) {
-          const teacherMap = buildTeacherTimetables(res.data.timetables || []);
+          const timetables = res.data.timetables || [];
+          
+          // 1. Extract institutional active days and periods (ignoring holidays)
+          const daysFound = new Set();
+          const periodsFound = new Set();
+          timetables.forEach(doc => {
+            Object.keys(doc.timetableData || {}).forEach(day => {
+              daysFound.add(day);
+              Object.keys(doc.timetableData[day]).forEach(p => periodsFound.add(Number(p)));
+            });
+          });
+
+          setGlobalConfig({
+            activeDays: DAYS.filter(d => daysFound.has(d)),
+            maxPeriods: Array.from(periodsFound).sort((a, b) => a - b)
+          });
+
+          const teacherMap = buildTeacherTimetables(timetables);
           setTeacherTTs(teacherMap);
         }
       } catch (err) {
         console.error("Fetch error:", err);
-        alert("Failed to fetch timetables");
       }
       setLoading(false);
     };
-
     fetchAndBuild();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="p-6 flex flex-col items-center justify-center">
-        <div className="h-10 w-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-3 text-blue-600 font-medium">Fetching data…</p>
-      </div>
-    );
-  }
+
+  if (loading) return (
+    <div className="p-6 flex flex-col items-center justify-center min-h-screen">
+      <div className="h-10 w-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+      <p className="mt-3 text-blue-600 font-medium">Loading faculty schedules...</p>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 px-8 py-10">
-      <div className="p-6 max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold mb-6">Teacher Timetables</h2>
-
-        {teacherTTs.length === 0 && <p>No teacher timetables found.</p>}
-
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 pb-10">
+      <Navbar />
+      <div className="p-10 max-w-7xl mx-auto pt-24">
+        <h2 className="text-3xl font-bold mb-8 text-gray-800">Teacher Timetables</h2>
+        {teacherTTs.length === 0 && <p className="text-gray-500 italic">No teacher schedules found.</p>}
         {teacherTTs.map((tt) => (
-          <div
-            key={tt.teacher}
-            className="border p-4 mb-6 bg-white rounded shadow-md"
-          >
-            <div className="flex justify-between mb-2">
-              <h3 className="font-bold text-lg">{tt.teacher}</h3>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => downloadCSV(tt.timetable, tt.teacher)}
-                  className="px-3 py-1 bg-gray-700 text-white rounded text-sm"
-                >
-                  Download
-                </button>
-              </div>
+          <div key={tt.teacher} className="mb-12 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <div className="bg-white p-4 flex justify-between items-center text-black border-b border-gray-200">
+              <h3 className="font-bold text-xl">{tt.teacher}</h3>
+              <button className="px-4 py-1.5 bg-black/10 hover:bg-black/20 rounded-lg text-sm transition font-semibold">Download CSV</button>
             </div>
-
-            <TeacherTable data={tt.timetable} />
+            <div className="p-6">
+              {/* Pass institutional config to ensure all days/periods show up */}
+              <TeacherTable data={tt.timetable} config={globalConfig} />
+            </div>
           </div>
         ))}
       </div>
@@ -159,53 +164,54 @@ function downloadCSV(table, filename) {
   link.click();
 }
 
-function TeacherTable({ data }) {
-  if (!data) return null;
+
+function TeacherTable({ data, config }) {
+  if (!data || !config) return null;
+
+  // Use institutional active days and periods instead of per-teacher entries
+  const { activeDays, maxPeriods } = config;
 
   return (
-    <table className="w-full border text-sm">
-      <thead>
-        <tr className="bg-gray-100">
-          <th className="border p-2">Period / Day</th>
-          {DAYS.map((d) => (
-            <th key={d} className="border p-2">
-              {d}
-            </th>
-          ))}
-        </tr>
-      </thead>
-
-      <tbody>
-        {PERIODS.map((p) => (
-          <tr key={p}>
-            <td className="border p-2 font-semibold bg-gray-50">P{p}</td>
-
-            {DAYS.map((d) => (
-              <td key={d} className="border p-2 align-top">
-                {(data[d]?.[p] || []).map((entry, i) => (
-                  <div
-                    key={i}
-                    className="p-1 mb-1 border rounded bg-white shadow-sm"
-                  >
-                    <strong>{entry.subject}</strong>
-                    <br />
-                    {entry.year && (
-                      <span className="text-xs text-gray-700">
-                        {entry.year} – Div {entry.division}
-                      </span>
-                    )}
-                    {entry.room && (
-                      <span className="text-xs text-gray-700 block">
-                        Room: {entry.room}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </td>
+    <div className="overflow-x-auto rounded-xl border border-gray-200">
+      <table className="w-full border-collapse text-sm">
+        <thead>
+          <tr className="bg-blue-600 text-white font-bold">
+            <th className="border p-3 w-24 text-center">Period</th>
+            {activeDays.map((d) => (
+              <th key={d} className="border p-3 min-w-[160px] text-center">{d}</th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {maxPeriods.map((p) => (
+            <tr key={p} className="hover:bg-gray-50 transition-colors">
+              <td className="border p-3 font-bold bg-blue-50 text-blue-700 text-center">P{p}</td>
+              {activeDays.map((d) => (
+                <td key={d} className="border p-2 align-top min-h-[100px]">
+                  {/* Safely check if teacher has an entry for this institutional slot */}
+                  {(data[d]?.[p] || []).map((entry, i) => (
+                    <div key={i} className={`p-2 mb-2 border-l-4 rounded shadow-sm ${
+                        entry.type === 'Theory' ? 'bg-blue-50 border-blue-500' : 'bg-purple-50 border-purple-500 min-h-[45px]'
+                      }`}>
+                      <div className="flex justify-between font-bold text-gray-800 text-[12px]">
+                        <span>{entry.subject}</span>
+                        {entry.batch && <span className="text-[10px] bg-purple-200 px-1 rounded">B{entry.batch}</span>}
+                      </div>
+                      <div className="text-[11px] text-gray-600 mt-1 space-y-0.5">
+                        <div className="flex items-center gap-1 font-medium text-blue-700">🎓 {entry.year} | Div {entry.division}</div>
+                        <div className="flex items-center gap-1">📍 Room: {entry.room}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {/* If no entry, the cell remains empty but visible (the non-working period for teacher) */}
+                  {(!data[d]?.[p] || data[d][p].length === 0) && <span className="text-gray-300 block text-center py-4">-</span>}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
+

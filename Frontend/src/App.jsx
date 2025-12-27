@@ -21,9 +21,11 @@ import { useAppContext } from "./context/AppContext";
 // Toast
 import { ToastContainer } from "react-toastify";
 import AdminLayout from "./layouts/AdminLayouts";
+import ProfileSetup from "./pages/ProfileSetup";
 import SavedTimetable from "./pages/SavedTimetable";
 import "react-toastify/dist/ReactToastify.css";
 import TeacherTimetable from "./pages/TeacherTimetable";
+import StudentTimetable from "./pages/StudentTimetable";
 import EditTimetable from "./pages/EditTimetable";
 import { Navbar } from "./components/Navbar";
 import ScrollToHash from "./components/ScrolltoHash";
@@ -48,7 +50,7 @@ export default function App() {
 
         <Route path="/email-verify" element={<EmailVerify />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-
+        {/* <Route path="/profile-setup" element={<ProfileSetup />} /> */}
         {/* ADMIN ROUTES */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
@@ -67,8 +69,8 @@ export default function App() {
           path="/teacher-timetable"
           element={<IndividualTeacherTimetable />}
         />
-
-        <Route path="/student-timetable" element={<SavedTimetable />} />
+        <Route path="/profile-setup" element={<ProfileSetup />} />
+        <Route path="/student-timetable" element={<StudentTimetable />} />
 
         {/* 404 PAGE */}
         <Route path="*" element={<NotFound />} />

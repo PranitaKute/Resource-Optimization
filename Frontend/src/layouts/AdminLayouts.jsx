@@ -54,11 +54,11 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-gray-50">
       {/* ================= NAVBAR ================= */}
       <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b shadow-sm flex items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-            R
+        <Link to="/" className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center">
+            <span className="text-primary-foreground font-bold text-lg">R</span>
           </div>
-          <span className="font-bold text-lg text-gray-800">ResourceOPT</span>
+          <span className="font-bold text-xl text-foreground">ResourceOPT</span>
         </Link>
 
         <div className="flex items-center gap-4">

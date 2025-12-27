@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react"; // Added useEffect import
 import { toast } from "react-toastify";
 import { useAppContext } from "../context/AppContext";
 
-export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGenerate }) {
+export default function RoomAllocation({
+  yearData,
+  rooms,
+  setRooms,
+  onBack,
+  onGenerate,
+}) {
   const { axios } = useAppContext();
   const [dbRooms, setDbRooms] = useState([]); // Database rooms
   const [selectedRoomId, setSelectedRoomId] = useState("");
-  
+
   // State for manual overrides if needed (referenced in your UI)
   const [roomType, setRoomType] = useState("Classroom");
   const [capacity, setCapacity] = useState(60);
@@ -28,21 +34,24 @@ export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGe
   }, [axios]);
 
   const addRoom = () => {
-    const roomObj = dbRooms.find(r => r._id === selectedRoomId);
+    const roomObj = dbRooms.find((r) => r._id === selectedRoomId);
     if (!roomObj) return toast.error("Select a room from the list");
-    
+
     // Check for duplicates in the current selection
-    if (rooms.find(r => r.name === roomObj.name)) {
+    if (rooms.find((r) => r.name === roomObj.name)) {
       return toast.error("Room already added to this schedule");
     }
-    
-    // Add room to the list. We include properties from the DB room 
+
+    // Add room to the list. We include properties from the DB room
     // but keep your UI structure (using 'id' for removal logic)
-    setRooms([...rooms, { 
-      ...roomObj, 
-      id: roomObj._id 
-    }]);
-    
+    setRooms([
+      ...rooms,
+      {
+        ...roomObj,
+        id: roomObj._id,
+      },
+    ]);
+
     setSelectedRoomId("");
     toast.success("Room added to selection");
   };
@@ -60,37 +69,57 @@ export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGe
         🏫 Room Management
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-6 bg-blue-50/50 rounded-xl border border-blue-100">
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Room Name</label>
-          <select 
-            className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-400 bg-white"
-            value={selectedRoomId}
-            onChange={(e) => setSelectedRoomId(e.target.value)}
-          >
-            <option value="">Select Room</option>
-            {dbRooms.map((r) => (
-              <option key={r._id} value={r._id}>
-                {r.name} ({r.type})
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="mb-8 rounded-2xl border border-blue-200 bg-blue-50/40 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+          {/* Select Room – 3 columns */}
+          <div className="md:col-span-3">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Room Name
+            </label>
 
-      
-        <div className="flex items-end">
-          <button 
-            onClick={addRoom}
-            className="w-full py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors"
-          >
-            + Add Room
-          </button>
+            <select
+              value={selectedRoomId}
+              onChange={(e) => setSelectedRoomId(e.target.value)}
+              className={`w-full h-11 px-4 rounded-xl border border-gray-300 bg-white
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+          focus:border-blue-500
+          ${!selectedRoomId ? "text-gray-400" : "text-gray-800"}
+        `}
+            >
+              {/* Placeholder / delimiter */}
+              <option value="" disabled>
+                Select ClassRooms | Labs | Tutorials With Capacities
+              </option>
+
+              {dbRooms.map((r) => (
+                <option key={r._id} value={r._id}>
+                  {r.name} ({r.type})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Add Room Button – 1 column */}
+          <div className="md:col-span-1">
+            <button
+              onClick={addRoom}
+              className="w-full h-11 rounded-xl bg-blue-600 text-white font-semibold
+          hover:bg-blue-700 transition-all shadow-sm
+          disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+              disabled={!selectedRoomId}
+            >
+              + Add Room
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="space-y-3">
         {rooms.map((room) => (
-          <div key={room.id} className="flex items-center justify-between p-4 bg-white border rounded-xl shadow-sm">
+          <div
+            key={room.id}
+            className="flex items-center justify-between p-4 bg-white border rounded-xl shadow-sm"
+          >
             <div>
               <span className="font-bold text-lg">{room.name}</span>
               <span className="ml-3 px-2 py-1 bg-gray-100 rounded text-xs uppercase font-bold text-gray-600">
@@ -98,7 +127,7 @@ export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGe
               </span>
               <p className="text-sm text-gray-500">Capacity: {room.capacity}</p>
             </div>
-            <button 
+            <button
               onClick={() => removeRoom(room.id)}
               className="text-red-500 hover:text-red-700 font-semibold"
             >
@@ -107,14 +136,21 @@ export default function RoomAllocation({ yearData, rooms, setRooms, onBack, onGe
           </div>
         ))}
         {rooms.length === 0 && (
-          <p className="text-center text-gray-400 py-10">No rooms added. Please select rooms above.</p>
+          <p className="text-center text-gray-400 py-10">
+            No rooms added. Please select rooms above.
+          </p>
         )}
       </div>
 
       <div className="flex justify-between mt-10 pt-6 border-t">
-        <button onClick={onBack} className="px-6 py-2 border rounded-xl hover:bg-gray-50">Back</button>
-        <button 
-          onClick={onGenerate} 
+        <button
+          onClick={onBack}
+          className="px-6 py-2 border rounded-xl hover:bg-gray-50"
+        >
+          Back
+        </button>
+        <button
+          onClick={onGenerate}
           className="px-10 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition-transform"
         >
           Generate Timetable

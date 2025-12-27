@@ -149,13 +149,14 @@ def solver_greedy_distribute(payload):
     teachers = payload.get("teachers", [])
     rooms = payload.get("rooms", [])
     
-    # 1. ORCHESTRATE REQUIREMENTS & CALCULATE DAILY QUOTAS
     theory_pool = []
     practical_pool = []
-    daily_quotas = {} # Format: { "Year_Div": { "Theory": N, "Practical": M } }
+    daily_quotas = {} 
 
     for yname, ydata in years.items():
         divs = int(ydata.get("divisions", 1))
+        # Use daysPerWeek from payload or default to count of non-holidays
+        holidays = ydata.get("holidays", [])
         working_days_count = int(ydata.get("daysPerWeek", 5))
         
         for div in range(1, divs + 1):
@@ -172,7 +173,9 @@ def solver_greedy_distribute(payload):
                     req = {
                         "year": yname, "div": div, "code": subj["code"],
                         "type": stype, "batch": b_idx if stype != "Theory" else None,
-                        "remaining": hours, "scheduled_today": False 
+                        "remaining": hours, 
+                        "count_today": 0, # CHANGED: Track count instead of boolean
+                        "max_per_day": math.ceil(hours / working_days_count) # Subject specific limit
                     }
                     if stype == "Theory":
                         theory_pool.append(req)
@@ -181,13 +184,11 @@ def solver_greedy_distribute(payload):
                         practical_pool.append(req)
                         total_practical_hours += hours
 
-            # Balanced Daily Load Calculation
             daily_quotas[class_key] = {
                 "Theory": math.ceil(total_theory_hours / working_days_count),
                 "Practical": math.ceil(total_practical_hours / working_days_count)
             }
 
-    # 2. INITIALIZE TRACKERS
     max_p = max([int(y.get("periodsPerDay", 6)) for y in years.values()])
     class_tt = {}
     teacher_tt = {t["name"]: {d: {p: [] for p in range(1, max_p + 1)} for d in DAY_NAMES} for t in teachers}
@@ -197,13 +198,11 @@ def solver_greedy_distribute(payload):
         divs = int(ydata.get("divisions", 1))
         class_tt[yname] = {d: {day: {p: [] for p in range(1, max_p + 1)} for day in DAY_NAMES} for d in range(1, divs + 1)}
 
-    # 3. SCHEDULING ENGINE
     for day in DAY_NAMES:
-        # Reset daily tracking
+        # Reset daily counters
         for r in theory_pool + practical_pool: 
-            r["scheduled_today"] = False
+            r["count_today"] = 0 # RESET
         
-        # Track what we've actually scheduled today per class
         daily_progress = {k: {"Theory": 0, "Practical": 0} for k in daily_quotas.keys()}
 
         for p in range(1, max_p + 1):
@@ -221,37 +220,52 @@ def solver_greedy_distribute(payload):
                     quota = daily_quotas[class_key]
                     progress = daily_progress[class_key]
 
-                    # --- ATTEMPT THEORY FIRST (Respecting Quota) ---
-                    # Generally lectures are in the morning, so we bias this for P1-P3
                     scheduled_in_this_slot = False
+                    
+                    # --- THEORY ---
                     if progress["Theory"] < quota["Theory"]:
                         for req in theory_pool:
                             if (req["year"] == yname and req["div"] == div and 
-                                req["remaining"] > 0 and not req["scheduled_today"]):
+                                req["remaining"] > 0 and req["count_today"] < req["max_per_day"]):
                                 if allocate_slot(req, day, p, class_tt, teacher_tt, room_tt, teachers, rooms):
                                     req["remaining"] -= 1
-                                    req["scheduled_today"] = True
+                                    req["count_today"] += 1
                                     progress["Theory"] += 1
                                     scheduled_in_this_slot = True
                                     break
                     
-                    # --- ATTEMPT PRACTICAL (Parallel Batches) ---
-                    # If quota for theory is done OR if no theory could be scheduled
+                    # --- PRACTICAL ---
                     if not scheduled_in_this_slot and progress["Practical"] < quota["Practical"]:
                         for req in practical_pool:
                             if (req["year"] == yname and req["div"] == div and 
-                                req["remaining"] > 0 and not req["scheduled_today"]):
+                                req["remaining"] > 0 and req["count_today"] < req["max_per_day"]):
                                 
-                                # Parallel Check: Batch must be free
                                 if any(occ["batch"] == req["batch"] for occ in class_tt[yname][div][day][p]):
                                     continue
                                     
                                 if allocate_slot(req, day, p, class_tt, teacher_tt, room_tt, teachers, rooms):
                                     req["remaining"] -= 1
-                                    req["scheduled_today"] = True
-                                    # Increment only once per slot even if multiple batches run
+                                    req["count_today"] += 1
                                     if not any(entry["type"] != "Theory" for entry in class_tt[yname][div][day][p][:-1]):
                                         progress["Practical"] += 1
+
+    # Final Fallback: If quotas prevented some hours from being placed, try one last loose pass
+    # This ensures that 6th hour is placed even if it exceeds the "ideal" daily quota
+    for req in theory_pool + practical_pool:
+        if req["remaining"] > 0:
+            for day in DAY_NAMES:
+                ydata = years[req["year"]]
+                if day in ydata.get("holidays", []): continue
+                for p in range(1, int(ydata.get("periodsPerDay", 6)) + 1):
+                    if p == int(ydata.get("lunchBreak", 4)): continue
+                    if req["remaining"] <= 0: break
+                    
+                    # Check if batch busy
+                    if any(occ["batch"] == req["batch"] for occ in class_tt[req["year"]][req["div"]][day][p]):
+                        continue
+
+                    if allocate_slot(req, day, p, class_tt, teacher_tt, room_tt, teachers, rooms):
+                        req["remaining"] -= 1
 
     return {
         "status": "success" if not any(r['remaining'] > 0 for r in theory_pool + practical_pool) else "partial",

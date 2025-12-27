@@ -131,10 +131,13 @@ function downloadCSV(table, filename) {
             const div = entry.division || "";
             const room = entry.room || "";
 
-            const extra =
-              [yr && `Y:${yr}`, div && `Div:${div}`, room && `R:${room}`]
-                .filter(Boolean)
-                .join(" ");
+            const extra = [
+              yr && `Y:${yr}`,
+              div && `Div:${div}`,
+              room && `R:${room}`,
+            ]
+              .filter(Boolean)
+              .join(" ");
 
             return extra ? `${subj} (${extra})` : subj;
           })
@@ -164,7 +167,9 @@ function TeacherTable({ data }) {
           <tr className="bg-blue-600 text-white font-bold">
             <th className="border p-4 w-24 text-center">Period</th>
             {DAYS.map((d) => (
-              <th key={d} className="border p-4 min-w-[160px] text-center">{d}</th>
+              <th key={d} className="border p-4 min-w-[160px] text-center">
+                {d}
+              </th>
             ))}
           </tr>
         </thead>
@@ -172,7 +177,9 @@ function TeacherTable({ data }) {
         <tbody>
           {PERIODS.map((p) => (
             <tr key={p} className="hover:bg-blue-50/30 transition-colors">
-              <td className="border p-4 font-black bg-blue-50 text-blue-700 text-center text-lg">P{p}</td>
+              <td className="border p-4 font-black bg-blue-50 text-blue-700 text-center text-lg">
+                P{p}
+              </td>
 
               {DAYS.map((d) => (
                 <td key={d} className="border p-3 align-top min-h-[110px]">
@@ -187,7 +194,8 @@ function TeacherTable({ data }) {
                       <div className="text-[11px] text-gray-600 mt-2 space-y-1">
                         {entry.year && (
                           <div className="flex items-center gap-1.5">
-                            <span className="opacity-70">📚</span> {entry.year} — Div {entry.division}
+                            <span className="opacity-70">📚</span> {entry.year}{" "}
+                            — Div {entry.division}
                           </div>
                         )}
                         {entry.room && (
@@ -201,7 +209,9 @@ function TeacherTable({ data }) {
                   {(data[d]?.[p] || []).length === 0 && (
                     // i want to reduce the height of black cells
                     <div className="py-2 text-center">
-                      <span className="text-gray-300 font-medium tracking-widest text-[10px] uppercase">-</span>
+                      <span className="text-gray-300 font-medium tracking-widest text-[10px] uppercase">
+                        -
+                      </span>
                     </div>
                   )}
                 </td>

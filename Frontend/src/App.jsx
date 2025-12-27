@@ -32,6 +32,7 @@ import ScrollToHash from "./components/ScrolltoHash";
 import AddTeacher from "./pages/AddTeacher";
 import IndividualTeacherTimetable from "./pages/IndividualTimetable";
 import AddRoom from "./pages/AddRoom";
+import VerifiedRoute from "./components/VerifiedRoute";
 
 export default function App() {
   const { isAdmin, isLoggedIn } = useAppContext();
@@ -67,10 +68,23 @@ export default function App() {
 
         <Route
           path="/teacher-timetable"
-          element={<IndividualTeacherTimetable />}
+          element={
+            <VerifiedRoute>
+              <IndividualTeacherTimetable />
+            </VerifiedRoute>
+          }
         />
+
+        <Route
+          path="/student-timetable"
+          element={
+            <VerifiedRoute>
+              <StudentTimetable />
+            </VerifiedRoute>
+          }
+        />
+
         <Route path="/profile-setup" element={<ProfileSetup />} />
-        <Route path="/student-timetable" element={<StudentTimetable />} />
 
         {/* 404 PAGE */}
         <Route path="*" element={<NotFound />} />

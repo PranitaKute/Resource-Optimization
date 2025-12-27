@@ -19,6 +19,12 @@ export const Navbar = () => {
 
   // ✅ GET CONTEXT FIRST
   const { isLoggedIn, userData, logout, axios } = useAppContext();
+  const navbarClass = `
+    fixed top-0 left-0 w-full z-50
+    ${isHomePage ? "bg-background/80 backdrop-blur-md" : "bg-transparent"}
+    border-b border-border
+    transition-all duration-300
+  `;
 
   // ✅ SAFE ROLE-BASED PATH
   const role = userData?.role?.trim().toLowerCase();
@@ -41,21 +47,7 @@ export const Navbar = () => {
   };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300
-        ${
-          isAuthPage ||
-          isResetPage ||
-          isAdminLogin ||
-          isEmailVerifyPage ||
-          isAdminDashboard
-            ? "bg-transparent border-b border-border"
-            : isHomePage
-            ? "bg-background/80 backdrop-blur-md border-b border-border"
-            : "bg-background border-b border-border"
-        }
-      `}
-    >
+    <nav className={navbarClass}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -107,15 +99,15 @@ export const Navbar = () => {
                   </button> */}
                   <div className="flex flex-col gap-2">
                     {/* NEW PROFILE SETUP BUTTON */}
-                    <button 
-                      onClick={() => navigate('/profile-setup')}
+                    <button
+                      onClick={() => navigate("/profile-setup")}
                       className="px-4 py-2 text-sm"
                     >
                       Profile
                     </button>
 
-                    <button 
-                      onClick={logout} 
+                    <button
+                      onClick={logout}
                       // i want to make this button take full height , do not want keep small gap below.
                       className="px-4 py-2 text-sm bg-red-50 text-red-600"
                     >

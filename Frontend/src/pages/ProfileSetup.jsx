@@ -81,7 +81,7 @@ export default function ProfileSetup() {
                 </select>
               </div>
 
-              <div>
+              {/*<div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Academic Year</label>
                 <select className="w-full p-3 border-2 border-gray-100 rounded-xl focus:border-blue-500 outline-none transition-all" value={formData.year} onChange={(e)=>setFormData({...formData, year: e.target.value})}>
                    <option value="">-- Choose Year --</option>
@@ -92,7 +92,7 @@ export default function ProfileSetup() {
                 </select>
               </div>
 
-              {/* <div className="grid grid-cols-2 gap-4">
+               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Division</label>
                   <input type="number" min={1} max={5} placeholder="1" className="w-full p-3 border-2 border-gray-100 rounded-xl focus:border-blue-500 outline-none transition-all text-center uppercase" value={formData.division} onChange={(e)=>setFormData({...formData, division: e.target.value})} />

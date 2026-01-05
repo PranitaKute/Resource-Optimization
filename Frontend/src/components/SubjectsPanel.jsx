@@ -48,6 +48,7 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
       ...prev,
       [year]: { ...prev[year], subjects: updated },
     }));
+    toast.success("Subject removed");
   }
 
   const getTypeColor = (type) => {
@@ -135,7 +136,7 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
 
           {subject.type === "Lab" && (
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold mb-2 text-purple-700">
+              <label className="block text-sm font-semibold mb-2 text-blue-700">
                 🕐 Lab Duration (Continuous Hours)
               </label>
               <div className="grid grid-cols-3 gap-3">
@@ -146,8 +147,8 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
                     onClick={() => setSubject({ ...subject, labDuration: duration })}
                     className={`px-4 py-3 rounded-lg font-semibold transition-all ${
                       subject.labDuration === duration
-                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
-                        : "bg-white border-2 border-purple-200 text-purple-700 hover:border-purple-400"
+                        ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg"
+                        : "bg-white border-2 border-blue-200 text-blue-700 hover:border-blue-400"
                     }`}
                   >
                     {duration} Hour{duration > 1 ? "s" : ""}
@@ -165,7 +166,7 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
               type="number"
               min="1"
               max="10"
-              className="px-4 py-3 border-2 border-purple-200 bg-white/90 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all font-semibold text-gray-700"
+              className="px-4 py-3 border-2 border-blue-200 bg-white/90 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all font-semibold text-gray-700"
               placeholder="No. of batches"
               value={subject.batches}
               onChange={(e) =>

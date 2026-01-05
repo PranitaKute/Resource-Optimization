@@ -195,7 +195,7 @@ export default function TeacherForm({
 
   function deleteTeacher(id) {
     setTeachers(teachers.filter((t) => t.id !== id));
-    toast.info("Teacher removed");
+    toast.success("Teacher removed");
   }
 
   // =====================================================

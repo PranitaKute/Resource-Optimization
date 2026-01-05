@@ -57,10 +57,40 @@ export default function RoomAllocation({
   };
 
   const removeRoom = (id) => {
-    if (!window.confirm("Are you sure you want to remove this room?")) return;
-
-    setRooms(rooms.filter((r) => r.id !== id));
-    toast.success("Room removed successfully");
+    // if (!window.confirm("Are you sure you want to remove this room?")) return;
+    toast(
+          ({ closeToast }) => (
+            <div>
+              <p className="font-medium mb-2">
+                Are you sure you want to remove this room?
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={closeToast}
+                  className="px-3 py-1 text-sm border rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setRooms(rooms.filter((r) => r.id !== id));
+                    toast.success("Room removed successfully");
+                    closeToast();
+                  }}
+                  className="px-3 py-1 text-sm bg-red-600 text-white rounded"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ),
+          {
+            position: "top-center",
+            autoClose: false,
+            closeOnClick: false,
+            draggable: false,
+          }
+        );
   };
 
   return (

@@ -22,13 +22,10 @@ export default function AdminLayout() {
     }
   };
 
-  const sidebar = [
-    {
-      name: "Timetable Generate",
-      path: "/admin/dashboard",
-      icon: assets.dashboard_icon,
-    },
-    {
+  // Sidebar sections
+  // 1. View Section - This displays data
+  const viewLinks = [
+    { 
       name: "View Timetable",
       path: "/admin/saved",
       icon: assets.saved_icon,
@@ -36,8 +33,13 @@ export default function AdminLayout() {
     {
       name: "Teacher Timetables",
       path: "/admin/teachers",
-      icon: assets.teacher_icon,
+      icon : assets.teacher_icon,
     },
+
+  ];
+
+  // 2. Add / Manage - Modification
+  const manageLinks = [
     {
       name: "Add Teacher",
       path: "/admin/add-teacher",
@@ -46,9 +48,10 @@ export default function AdminLayout() {
     {
       name: "Add Room",
       path: "/admin/add-room",
-      icon: assets.room_icon, // or use a Lucide icon like <Building2 size={20} />
+      icon: assets.room_icon,
     },
   ];
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -73,24 +76,80 @@ export default function AdminLayout() {
       </header>
 
       {/* ================= SIDEBAR ================= */}
-      <aside className="fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] w-64 bg-white border-r overflow-y-auto">
-        {sidebar.map((item) => (
-          <NavLink
-            key={item.name}
-            to={item.path}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 transition ${
-                isActive
-                  ? "bg-blue-100 border-r-4 border-blue-600 text-blue-600"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`
-            }
-          >
-            <img src={item.icon} alt={item.name} className="w-6 h-6" />
-            <span className="font-medium">{item.name}</span>
-          </NavLink>
+      <aside className="fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] w-64 bg-white border-r overflow-y-auto px-4 py-6">
+        {/* Button for generate timetable */}
+        <NavLink 
+          to="/admin/dashboard"
+          className="flex items-center justify-center gap-2 mx-2 mb-8 py-2 rounded-xl bg-blue-600 
+                      text-white font-semibold shadow-md hover:bg-blue-700 shadow-lg transition"
+        >
+          + Generate New Timetable
+        </NavLink>
+
+        {/* View Section */}
+        <p className="px-3 text-[13px] font-semibold text-gray-400 uppercase mb-3 tracking-widest">
+          View
+        </p>
+        {viewLinks.map((item) =>(
+          // <NavLink
+          //   key={item.name}
+          //   to={item.path}
+          //   className={({isActive}) =>
+          //   `group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all 
+          //     ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}`
+          //   }
+          // >
+          //   <img src={item.icon} alt = {item.name} className="w-5 h-5" />
+          //   <span className="text-sm font-medium">{item.name}</span>
+          // </NavLink>
+          <NavLink key={item.name} to={item.path}>
+          {({ isActive }) => (
+            <div
+              className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all
+                ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}
+              `}
+            >
+              <img src={item.icon} alt={item.name} className="w-5 h-5" />
+
+              <span className="text-sm font-medium">{item.name}</span>
+
+              {/* Dot Indicator */}
+              {isActive && (
+                <span className="ml-auto w-2 h-2 rounded-full bg-blue-500"></span>
+              )}
+            </div>
+          )}
+        </NavLink>
         ))}
-      </aside>
+
+        <div className="my-4 border-t border-gray-100"/>    {/* divider */}
+
+        {/* Add / Manage Section */}
+        <p className="px-3 text-[13px] font-semibold text-gray-400 uppercase mt-6 mb-2 tracking-wide">
+          Manage Resources
+        </p>
+        {manageLinks.map((item) => (
+          <NavLink key={item.name} to={item.path}>
+          {({ isActive }) => (
+            <div
+              className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all
+                ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}
+              `}
+            >
+              <img src={item.icon} alt={item.name} className="w-5 h-5" />
+
+              <span className="text-sm font-medium">{item.name}</span>
+
+              {/* Dot Indicator */}
+              {isActive && (
+                <span className="ml-auto w-2 h-2 rounded-full bg-blue-500"></span>
+              )}
+            </div>
+          )}
+        </NavLink>
+
+        ))}
+        </aside>
 
       {/* ================= CONTENT ================= */}
       <main className="pt-16 pl-64 pb-6">

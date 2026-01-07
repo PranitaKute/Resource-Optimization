@@ -66,7 +66,7 @@ export default function SchedulerResult({ result, onBack, onSave }) {
       const parts = String(outerKey).split(" ");
       const year = parts[0] || outerKey;
       const divMatch = parts.find((p) => /^\d+$/.test(p));
-      const division = divMatch || "1";
+      const division = divMatch || "A";
 
       payload = {
         timetableType: "class",
@@ -340,7 +340,7 @@ export default function SchedulerResult({ result, onBack, onSave }) {
           </div>
         )}
 
-        📋 TEACHER CONFLICT REPORT
+        {/* 📋 TEACHER CONFLICT REPORT */}
         {conflicts.length > 0 && (
           <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold text-red-800 flex items-center gap-3 mb-4">

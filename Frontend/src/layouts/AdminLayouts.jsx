@@ -33,9 +33,8 @@ export default function AdminLayout() {
     {
       name: "Teacher Timetables",
       path: "/admin/teachers",
-      icon : assets.teacher_icon,
+      icon: assets.teacher_icon,
     },
-
   ];
 
   // 2. Add / Manage - Modification
@@ -50,9 +49,13 @@ export default function AdminLayout() {
       path: "/admin/add-room",
       icon: assets.room_icon,
     },
+    {
+      name: "Add Subject",
+      path: "/admin/add-subject",
+      icon: assets.add_icon, // You can create a specific subject icon if needed
+    },
   ];
   
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ================= NAVBAR ================= */}
@@ -90,39 +93,25 @@ export default function AdminLayout() {
         <p className="px-3 text-[13px] font-semibold text-gray-400 uppercase mb-3 tracking-widest">
           View
         </p>
-        {viewLinks.map((item) =>(
-          // <NavLink
-          //   key={item.name}
-          //   to={item.path}
-          //   className={({isActive}) =>
-          //   `group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all 
-          //     ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}`
-          //   }
-          // >
-          //   <img src={item.icon} alt = {item.name} className="w-5 h-5" />
-          //   <span className="text-sm font-medium">{item.name}</span>
-          // </NavLink>
+        {viewLinks.map((item) => (
           <NavLink key={item.name} to={item.path}>
-          {({ isActive }) => (
-            <div
-              className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all
-                ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}
-              `}
-            >
-              <img src={item.icon} alt={item.name} className="w-5 h-5" />
-
-              <span className="text-sm font-medium">{item.name}</span>
-
-              {/* Dot Indicator */}
-              {isActive && (
-                <span className="ml-auto w-2 h-2 rounded-full bg-blue-500"></span>
-              )}
-            </div>
-          )}
-        </NavLink>
+            {({ isActive }) => (
+              <div
+                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all
+                  ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}
+                `}
+              >
+                <img src={item.icon} alt={item.name} className="w-5 h-5" />
+                <span className="text-sm font-medium">{item.name}</span>
+                {isActive && (
+                  <span className="ml-auto w-2 h-2 rounded-full bg-blue-500"></span>
+                )}
+              </div>
+            )}
+          </NavLink>
         ))}
 
-        <div className="my-4 border-t border-gray-100"/>    {/* divider */}
+        <div className="my-4 border-t border-gray-100" />
 
         {/* Add / Manage Section */}
         <p className="px-3 text-[13px] font-semibold text-gray-400 uppercase mt-6 mb-2 tracking-wide">
@@ -130,31 +119,25 @@ export default function AdminLayout() {
         </p>
         {manageLinks.map((item) => (
           <NavLink key={item.name} to={item.path}>
-          {({ isActive }) => (
-            <div
-              className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all
-                ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}
-              `}
-            >
-              <img src={item.icon} alt={item.name} className="w-5 h-5" />
-
-              <span className="text-sm font-medium">{item.name}</span>
-
-              {/* Dot Indicator */}
-              {isActive && (
-                <span className="ml-auto w-2 h-2 rounded-full bg-blue-500"></span>
-              )}
-            </div>
-          )}
-        </NavLink>
-
+            {({ isActive }) => (
+              <div
+                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all
+                  ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}
+                `}
+              >
+                <img src={item.icon} alt={item.name} className="w-5 h-5" />
+                <span className="text-sm font-medium">{item.name}</span>
+                {isActive && (
+                  <span className="ml-auto w-2 h-2 rounded-full bg-blue-500"></span>
+                )}
+              </div>
+            )}
+          </NavLink>
         ))}
-        </aside>
+      </aside>
 
       {/* ================= CONTENT ================= */}
       <main className="pt-16 pl-64 pb-6">
-        {/* <main className="pt-16 pl-64 pr-6 pb-6"> */}
-
         <Outlet />
       </main>
     </div>

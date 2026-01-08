@@ -1,11 +1,37 @@
-// src/pages/StudentTimetable.jsx - FIXED: Uses unified renderer
+// src/pages/StudentTimetable.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAppContext } from "../context/AppContext";
 import { Navbar } from "../components/Navbar";
-import { TimetableTable, downloadTimetableCSV } from "../utils/renderTimetableCell.jsx";
+import {
+  TimetableTable,
+  downloadTimetableCSV,
+} from "../utils/renderTimetableCell.jsx";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+/* =========================
+   Academic Year Resolver
+   (from admissionYear)
+========================= */
+const getAcademicYearLabel = (admissionYear) => {
+  if (!admissionYear) return null;
+
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const month = now.getMonth(); // Jan = 0
+
+  // Academic year starts around July
+  const academicBase = month >= 6 ? currentYear : currentYear - 1;
+  const yearNum = academicBase - admissionYear + 1;
+
+  if (yearNum === 1) return "First";
+  if (yearNum === 2) return "Second";
+  if (yearNum === 3) return "Third";
+  if (yearNum === 4) return "Final";
+
+  return null;
+};
 
 export default function StudentTimetable() {
   const { userData } = useAppContext();
@@ -20,10 +46,13 @@ export default function StudentTimetable() {
         let allData = res.data.timetables;
 
         if (userData?.role === "student") {
+          const academicYear = getAcademicYearLabel(userData?.admissionYear);
+
           allData = allData.filter(
             (item) =>
-              item.year === userData.year && 
-              String(item.division) === String(userData.division)
+              item.year === academicYear &&
+              String(item.division) === String(userData.division) &&
+              item.department === userData.department
           );
         }
 
@@ -36,51 +65,74 @@ export default function StudentTimetable() {
   };
 
   useEffect(() => {
-    fetchTimetables();
+    if (userData) {
+      fetchTimetables();
+    }
   }, [userData]);
 
   if (loading)
     return (
       <div className="p-6 flex flex-col items-center justify-center min-h-screen">
         <div className="h-10 w-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-3 text-blue-600 font-medium">Fetching your personal timetable...</p>
+        <p className="mt-3 text-blue-600 font-medium">
+          Fetching your personal timetable...
+        </p>
       </div>
     );
+
+  const academicYearLabel = getAcademicYearLabel(userData?.admissionYear);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 pb-10">
       <Navbar />
+
       <div className="p-10 max-w-7xl mx-auto pt-24">
         <h2 className="text-3xl font-bold mb-8 text-gray-800">
-          {userData?.role === "student" ? "My Class Timetable" : "View Timetable"}
+          {userData?.role === "student"
+            ? "My Class Timetable"
+            : "View Timetable"}
         </h2>
 
         {timetables.length === 0 && (
           <div className="bg-white p-10 rounded-2xl shadow-xl text-center text-gray-500 border border-gray-100">
-            No timetable found for {userData?.year} Year-Division {userData?.division}.
+            No timetable found for{" "}
+            <b>
+              {academicYearLabel} Year – Division {userData?.division}
+            </b>
+            .
           </div>
         )}
 
         {timetables.map((item) => (
-          <div key={item._id} className="mb-10 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+          <div
+            key={item._id}
+            className="mb-10 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
+          >
             <div className="bg-white p-5 flex justify-between items-center text-black border-b border-gray-100">
               <div className="flex flex-col">
                 <h3 className="font-bold text-2xl text-blue-900">
                   {item.year} — Division {item.division}
                 </h3>
+                <span className="text-sm font-semibold text-gray-600 mt-1">
+                  Department: {item.department}
+                </span>
+
                 {userData?.batch && (
                   <span className="text-sm font-semibold text-blue-600 mt-1">
                     Batch: {userData.batch}
                   </span>
                 )}
               </div>
+
               <div className="flex gap-3">
-                <button 
-                  onClick={() => downloadTimetableCSV(
-                    item.timetableData, 
-                    `${item.year}_Div${item.division}`,
-                    DAYS
-                  )}
+                <button
+                  onClick={() =>
+                    downloadTimetableCSV(
+                      item.timetableData,
+                      `${item.year}_Div${item.division}`,
+                      DAYS
+                    )
+                  }
                   className="px-5 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-xl text-sm font-bold shadow-lg transition-all"
                 >
                   Download CSV
@@ -89,14 +141,14 @@ export default function StudentTimetable() {
             </div>
 
             <div className="p-6">
-              {/* ✅ UNIFIED RENDERER - Same as generated timetable, with batch filtering */}
-              <TimetableTable 
-                data={item.timetableData} 
+              {/* ✅ Unified renderer with batch filtering */}
+              <TimetableTable
+                data={item.timetableData}
                 DAYS={DAYS}
                 renderOptions={{
-                  showYearDivision: false,           // Don't show year/div in student view
-                  filterByBatch: userData?.batch,    // Filter by student's batch
-                  highlightBatch: true               // Highlight student's batch
+                  showYearDivision: false,
+                  filterByBatch: userData?.batch,
+                  highlightBatch: true,
                 }}
               />
             </div>

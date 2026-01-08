@@ -6,58 +6,82 @@ import { EMAIL_VERIFY_TEMPLATE,PASSWORD_RESET_TEMPLATE ,TEST_EMAIL_TEMPLATE} fro
 
 // ---------------- REGISTER ----------------
 export const register = async (req, res) => {
-    const { name, email, password } = req.body;
+  const {
+    name,
+    email,
+    password,
+    department,
+    admissionYear,
+    division,
+  } = req.body;
 
-    if (!name || !email || !password) {
-        return res.status(400).json({ success: false, message: "All fields are required" });
+  if (!name || !email || !password) {
+    return res
+      .status(400)
+      .json({ success: false, message: "All fields are required" });
+  }
+
+  try {
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User already exists" });
     }
 
-    try {
-        const existingUser = await userModel.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ success: false, message: "User already exists" });
-        }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new userModel({
+      name,
+      email,
+      password: hashedPassword,
 
-        const user = new userModel({
-            name,
-            email,
-            password: hashedPassword,
-        });
+      // academic info (optional but supported)
+      department: department || "",
+      admissionYear: admissionYear || null,
+      division: division || "",
+    });
 
-        await user.save();
+    await user.save();
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '7d'
-        });
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-       res.cookie('token', token, {
-  httpOnly: true,
-  sameSite: "none",
-  secure: true,
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-});
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
+    await transporter.sendMail({
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "Welcome to Our Platform",
+      html: TEST_EMAIL_TEMPLATE
+        .replace("{{name}}", name)
+        .replace("{{email}}", email),
+    });
 
-        await transporter.sendMail({
-            from: process.env.SENDER_EMAIL,
-            to: email,
-            subject: "Welcome to Our Platform",
-            //text: `Hello ${name}, Welcome to our platform!`
-            html: TEST_EMAIL_TEMPLATE.replace("{{name}}", name).replace("{{email}}", email)
-        });
-
-        res.json({
-            success: true,
-            message: "User registered successfully",
-            user: { id: user._id, name: user.name, email: user.email }
-        });
-
-    } catch (error) {
-        res.json({ success: false, message: error.message });
-    }
+    res.json({
+      success: true,
+      message: "User registered successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: error.message });
+  }
 };
+
 
 // ---------------- LOGIN ----------------
 export const login = async (req, res) => {

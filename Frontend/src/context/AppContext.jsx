@@ -8,28 +8,35 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const navigate = useNavigate();
 
+  // ===============================
   // USER AUTH STATES
+  // ===============================
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
 
+  // ===============================
   // ADMIN PANEL STATE
+  // ===============================
   const [isAdmin, setIsAdmin] = useState(false);
   const [loadingApp, setLoadingApp] = useState(true);
 
   const backendURL = import.meta.env.VITE_BACKEND_URL;
 
+  // =================================================
+  // REDIRECT STUDENT TO PROFILE SETUP (ONLY IF NEEDED)
+  // =================================================
   useEffect(() => {
-    if (userData && userData.role === 'student') {
-      // If essential academic details are missing, force redirect to setup
-      if (!userData.year || !userData.division) {
-        navigate('/profile-setup');
+    if (userData && userData.role === "student") {
+      // Now only batch is required in profile setup
+      if (!userData.batch) {
+        navigate("/profile-setup");
       }
     }
   }, [userData, navigate]);
 
-  // ==========================================
-  // CHECK USER AUTH
-  // ==========================================
+  // ===============================
+  // CHECK USER AUTH STATE
+  // ===============================
   const getAuthState = async () => {
     try {
       const res = await axiosInstance.get("/api/auth/is-auth");
@@ -37,14 +44,14 @@ export const AppProvider = ({ children }) => {
         setIsLoggedIn(res.data.isLoggedIn);
       }
       return res.data.isLoggedIn;
-    } catch (err) {
+    } catch {
       return false;
     }
   };
 
-  // ==========================================
+  // ===============================
   // FETCH USER DATA
-  // ==========================================
+  // ===============================
   const getUserData = async () => {
     try {
       const res = await axiosInstance.get("/api/user/data");
@@ -57,21 +64,21 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // ==========================================
+  // ===============================
   // CHECK ADMIN SESSION
-  // ==========================================
+  // ===============================
   const checkAdmin = async () => {
     try {
       const res = await axiosInstance.get("/api/admin/me");
       setIsAdmin(res.data.authenticated === true);
-    } catch (err) {
+    } catch {
       setIsAdmin(false);
     }
   };
 
-  // ==========================================
-  // AUTO RUN ONCE WHEN APP LOADS
-  // ==========================================
+  // ===============================
+  // INITIAL APP LOAD
+  // ===============================
   useEffect(() => {
     const init = async () => {
       await getAuthState();
@@ -82,9 +89,9 @@ export const AppProvider = ({ children }) => {
     init();
   }, []);
 
-  // ==========================================
-  // LOGIN FUNCTION
-  // ==========================================
+  // ===============================
+  // LOGIN
+  // ===============================
   const login = async (email, password) => {
     try {
       const res = await axiosInstance.post("/api/auth/login", {
@@ -100,20 +107,30 @@ export const AppProvider = ({ children }) => {
       } else {
         toast.error(res.data.message);
       }
-    } catch (err) {
+    } catch {
       toast.error("Login failed");
     }
   };
 
-  // ==========================================
-  // SIGNUP FUNCTION
-  // ==========================================
-  const signup = async (name, email, password) => {
+  // ===============================
+  // SIGNUP (UPDATED)
+  // ===============================
+  const signup = async (
+    name,
+    email,
+    password,
+    department,
+    admissionYear,
+    division
+  ) => {
     try {
       const res = await axiosInstance.post("/api/auth/register", {
         name,
         email,
         password,
+        department,
+        admissionYear,
+        division,
       });
 
       if (res.data.success) {
@@ -122,14 +139,14 @@ export const AppProvider = ({ children }) => {
       } else {
         toast.error(res.data.message);
       }
-    } catch (err) {
+    } catch {
       toast.error("Signup failed");
     }
   };
 
-  // ==========================================
-  // LOGOUT FUNCTION
-  // ==========================================
+  // ===============================
+  // LOGOUT
+  // ===============================
   const logout = async () => {
     try {
       await axiosInstance.post("/api/auth/logout");
@@ -137,14 +154,14 @@ export const AppProvider = ({ children }) => {
       setUserData(null);
       toast.success("Logged out");
       navigate("/login");
-    } catch (err) {
+    } catch {
       toast.error("Logout failed");
     }
   };
 
-  // ==========================================
+  // ===============================
   // CONTEXT VALUE
-  // ==========================================
+  // ===============================
   const value = {
     backendURL,
     axios: axiosInstance,

@@ -1,31 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { assets } from "../assets/assets";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import { Navbar } from "../components/Navbar";
 
+/* =========================
+   Department → Divisions
+========================= */
+const departmentDivisions = {
+  "Software Engineering": ["A"], // only one div
+  "AI Engineering": ["A", "B", "C"],
+  "Computer Engineering": ["A", "B"],
+  "IT Engineering": ["A", "B"],
+};
+
 const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // Check if we should show signup or login based on URL state
+
   const initialState = location.state?.mode === "signup" ? "Sign Up" : "Login";
   const [state, setState] = useState(initialState);
 
   const { login, signup } = useAppContext();
 
+  // Common fields
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Update state when location changes
+  // Signup-only fields
+  const [department, setDepartment] = useState("");
+  const [admissionYear, setAdmissionYear] = useState("");
+  const [division, setDivision] = useState("");
+
+  /* =========================
+     Auto-select division
+  ========================= */
   useEffect(() => {
-    if (location.state?.mode === "signup") {
-      setState("Sign Up");
-    } else if (location.state?.mode === "login") {
-      setState("Login");
+    if (!department) return;
+
+    const divs = departmentDivisions[department] || [];
+    if (divs.length === 1) {
+      setDivision(divs[0]); // auto assign
+    } else {
+      setDivision("");
     }
+  }, [department]);
+
+  useEffect(() => {
+    if (location.state?.mode === "signup") setState("Sign Up");
+    else if (location.state?.mode === "login") setState("Login");
   }, [location]);
 
   const onSubmitHandler = async (e) => {
@@ -33,48 +58,29 @@ const Login = () => {
 
     try {
       if (state === "Sign Up") {
-        await signup(name, email, password);
+        if (!department || !admissionYear || !division) {
+          return toast.error("Please fill all required fields");
+        }
+
+        await signup(
+          name,
+          email,
+          password,
+          department,
+          Number(admissionYear),
+          division
+        );
       } else {
         await login(email, password);
       }
-    } catch (err) {
+    } catch {
       toast.error("Something went wrong");
     }
   };
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100 flex items-center justify-center relative overflow-hidden p-4">
-      {/* Animated Background Blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-
-        <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob-slow"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob-slow animation-delay-3000"></div>
-      </div>
-
-      {/* TOP LEFT LOGO */}
-      {/* <div className="absolute left-5 sm:left-10 top-5 flex items-center space-x-2 cursor-pointer z-10">
-        <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">
-                R
-              </span>
-            </div>
-            <span className="font-bold text-xl text-foreground">
-              ResourceOPT
-            </span>
-          </Link> }
-      </div> */}
-      <Navbar/>
-
-      {/* TOP RIGHT AUTH LOGO */}
-      {/* <img
-        src={assets.logo}
-        alt="auth logo"
-        className="absolute right-4 sm:right-10 top-5 w-20 sm:w-24 z-10"
-      /> */}
+      <Navbar />
 
       {/* CENTER CARD */}
       <div className="relative z-20 bg-slate-900 px-10 py-12 rounded-xl shadow-xl w-full max-w-md text-indigo-300">
@@ -89,8 +95,9 @@ const Login = () => {
         </p>
 
         <form onSubmit={onSubmitHandler}>
+          {/* NAME */}
           {state === "Sign Up" && (
-            <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
+            <div className="mb-4 flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#333A5C]">
               <img src={assets.person_icon} alt="" />
               <input
                 onChange={(e) => setName(e.target.value)}
@@ -103,7 +110,64 @@ const Login = () => {
             </div>
           )}
 
-          <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
+          {/* DEPARTMENT */}
+          {state === "Sign Up" && (
+            <select
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              required
+              className="mb-4 w-full px-5 py-2.5 rounded-full bg-[#333A5C] text-white"
+            >
+              <option value="">Select Department</option>
+              {Object.keys(departmentDivisions).map((dept) => (
+                <option key={dept} value={dept} className="text-black">
+                  {dept}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {/* DIVISION */}
+          {state === "Sign Up" && department && (
+            <select
+              value={division}
+              onChange={(e) => setDivision(e.target.value)}
+              required
+              disabled={departmentDivisions[department].length === 1}
+              className="mb-4 w-full px-5 py-2.5 rounded-full bg-[#333A5C] text-white"
+            >
+              <option value="">
+                {departmentDivisions[department].length === 1
+                  ? "Division Auto Assigned"
+                  : "Select Division"}
+              </option>
+              {departmentDivisions[department].map((div) => (
+                <option key={div} value={div} className="text-black">
+                  Division {div}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {/* ADMISSION YEAR */}
+          {state === "Sign Up" && (
+            <select
+              value={admissionYear}
+              onChange={(e) => setAdmissionYear(e.target.value)}
+              required
+              className="mb-4 w-full px-5 py-2.5 rounded-full bg-[#333A5C] text-white"
+            >
+              <option value="">Admission Year</option>
+              {[2021, 2022, 2023, 2024, 2025].map((year) => (
+                <option key={year} value={year} className="text-black">
+                  {year}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {/* EMAIL */}
+          <div className="mb-4 flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#333A5C]">
             <img src={assets.mail_icon} alt="" />
             <input
               onChange={(e) => setEmail(e.target.value)}
@@ -115,7 +179,8 @@ const Login = () => {
             />
           </div>
 
-          <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
+          {/* PASSWORD */}
+          <div className="mb-4 flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#333A5C]">
             <img src={assets.lock_icon} alt="" />
             <input
               onChange={(e) => setPassword(e.target.value)}

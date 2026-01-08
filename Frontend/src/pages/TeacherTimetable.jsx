@@ -1,7 +1,10 @@
-// src/pages/TeacherTimetable.jsx - FIXED: Uses unified renderer
+// src/pages/TeacherTimetable.jsx - FIXED: Matches generated timetable exactly
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { TimetableTable, downloadTimetableCSV } from "../utils/renderTimetableCell.jsx";
+import {
+  TimetableTable,
+  downloadTimetableCSV,
+} from "../utils/renderTimetableCell.jsx";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -15,7 +18,9 @@ export default function TeacherTimetable() {
         const res = await axios.get("http://localhost:5000/api/timetable/all");
         if (res.data.success) {
           // Build teacher timetables dynamically from class timetables
-          const teacherMap = buildTeacherTimetablesFromClass(res.data.timetables || []);
+          const teacherMap = buildTeacherTimetablesFromClass(
+            res.data.timetables || []
+          );
           setTeacherTTs(teacherMap);
         }
       } catch (err) {
@@ -30,70 +35,84 @@ export default function TeacherTimetable() {
 
   if (loading) {
     return (
-      <div className="p-6 flex flex-col items-center justify-center">
+      <div className="p-6 flex flex-col items-center justify-center min-h-screen">
         <div className="h-10 w-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-3 text-blue-600 font-medium">Building teacher timetables…</p>
+        <p className="mt-3 text-blue-600 font-medium">
+          Building teacher timetables…
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Teacher Timetables</h2>
-        <p className="text-sm text-gray-600 mt-1">
-          Generated dynamically from class timetables • Always up-to-date
-        </p>
-      </div>
-
-      {teacherTTs.length === 0 && (
-        <div className="bg-white p-8 rounded-xl border text-center text-gray-500">
-          No teacher timetables found. Generate class timetables first.
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-800">
+            Teacher Timetables
+          </h2>
+          <p className="text-sm text-gray-600 mt-2">
+            Generated dynamically from class timetables • Always up-to-date
+          </p>
         </div>
-      )}
 
-      {teacherTTs.map((tt) => (
-        <div
-          key={tt.teacher}
-          className="border p-4 mb-6 bg-white rounded-xl shadow-md"
-        >
-          <div className="flex justify-between mb-4">
-            <div>
-              <h3 className="font-bold text-lg text-gray-800">{tt.teacher}</h3>
-              <p className="text-sm text-gray-500">
-                {tt.totalClasses} classes across {tt.days.length} days
-              </p>
+        {teacherTTs.length === 0 && (
+          <div className="bg-white p-8 rounded-xl border text-center text-gray-500">
+            No teacher timetables found. Generate class timetables first.
+          </div>
+        )}
+
+        {teacherTTs.map((tt) => (
+          <div
+            key={tt.teacher}
+            className="mb-8 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
+          >
+            {/* Header Section */}
+            <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-6 text-white">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-bold text-2xl mb-2">{tt.teacher}</h3>
+                  <div className="flex gap-4 text-sm text-blue-100">
+                    <span>📚 {tt.totalClasses} classes</span>
+                    <span>📅 {tt.days.length} days</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() =>
+                    downloadTimetableCSV(tt.timetable, tt.teacher, DAYS)
+                  }
+                  className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg text-sm font-semibold transition-all border border-white/30"
+                >
+                  📥 Download CSV
+                </button>
+              </div>
             </div>
 
-            <div className="flex gap-2">
-              <button
-                onClick={() => downloadTimetableCSV(tt.timetable, tt.teacher, DAYS)}
-                className="px-3 py-1 bg-gray-700 text-white rounded text-sm hover:bg-gray-800 transition"
-              >
-                Download CSV
-              </button>
+            {/* Timetable Section */}
+            <div className="p-6">
+              {/* ✅ UNIFIED RENDERER - Exact same as generated timetable */}
+              <TimetableTable
+                data={tt.timetable}
+                DAYS={DAYS}
+                renderOptions={{
+                  showYearDivision: true, // Show which class they're teaching
+                  filterByBatch: null, // No batch filtering
+                  highlightBatch: false, // No highlighting
+                }}
+              />
             </div>
           </div>
-
-          {/* ✅ UNIFIED RENDERER - Same as generated timetable, showing year/division */}
-          <TimetableTable 
-            data={tt.timetable} 
-            DAYS={DAYS}
-            renderOptions={{
-              showYearDivision: true,   // Show which class they're teaching
-              filterByBatch: null,       // No batch filtering
-              highlightBatch: false      // No highlighting
-            }}
-          />
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
 
 /**
  * Build teacher timetables DYNAMICALLY from class timetables
- * This ensures teacher timetables are always in sync with class timetables
+ * ✅ CRITICAL: Preserves TIME SLOTS, not period numbers
+ * ✅ CRITICAL: Preserves lab_part for multi-hour continuous labs
  */
 function buildTeacherTimetablesFromClass(classTimetables) {
   const teacherMap = {};
@@ -107,8 +126,8 @@ function buildTeacherTimetablesFromClass(classTimetables) {
     // For each day in the timetable
     Object.keys(table).forEach((day) => {
       const dayData = table[day] || {};
-      
-      // For each time slot in the day
+
+      // For each time slot in the day (e.g., "08:00-09:00", "09:00-10:00")
       Object.keys(dayData).forEach((timeSlot) => {
         const entries = dayData[timeSlot] || [];
 
@@ -133,13 +152,14 @@ function buildTeacherTimetablesFromClass(classTimetables) {
           teacherMap[teacher][day][timeSlot].push({
             subject: entry.subject,
             type: entry.type,
+            teacher: teacher, // Include teacher name for consistency
             year: entry.year || year,
             division: entry.division || division,
             room: entry.room,
             batch: entry.batch,
             time_slot: timeSlot,
-            lab_part: entry.lab_part,              // ✅ CRITICAL: Preserve lab_part
-            lab_session_id: entry.lab_session_id   // ✅ CRITICAL: Preserve session ID
+            lab_part: entry.lab_part, // ✅ CRITICAL: Preserve lab_part (e.g., "1/2", "2/2")
+            lab_session_id: entry.lab_session_id, // ✅ CRITICAL: Preserve session ID for grouping
           });
         });
       });
@@ -147,25 +167,27 @@ function buildTeacherTimetablesFromClass(classTimetables) {
   });
 
   // Convert map to array with metadata
-  return Object.keys(teacherMap).map((teacher) => {
-    const timetable = teacherMap[teacher];
-    
-    // Calculate statistics
-    let totalClasses = 0;
-    const daysSet = new Set();
-    
-    Object.keys(timetable).forEach(day => {
-      daysSet.add(day);
-      Object.keys(timetable[day]).forEach(slot => {
-        totalClasses += timetable[day][slot].length;
-      });
-    });
+  return Object.keys(teacherMap)
+    .map((teacher) => {
+      const timetable = teacherMap[teacher];
 
-    return {
-      teacher,
-      timetable,
-      totalClasses,
-      days: Array.from(daysSet)
-    };
-  }).sort((a, b) => a.teacher.localeCompare(b.teacher));
+      // Calculate statistics
+      let totalClasses = 0;
+      const daysSet = new Set();
+
+      Object.keys(timetable).forEach((day) => {
+        daysSet.add(day);
+        Object.keys(timetable[day]).forEach((slot) => {
+          totalClasses += timetable[day][slot].length;
+        });
+      });
+
+      return {
+        teacher,
+        timetable,
+        totalClasses,
+        days: Array.from(daysSet),
+      };
+    })
+    .sort((a, b) => a.teacher.localeCompare(b.teacher));
 }

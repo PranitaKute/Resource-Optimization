@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const IDLE_TIME = 5 * 60 * 1000; // 5 minutes
+const IDLE_TIME = 1 * 20 * 1000; // 5 minutes in milliseconds
 
 export default function useIdleLogout(onLogout) {
   const timerRef = useRef(null);

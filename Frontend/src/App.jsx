@@ -26,6 +26,7 @@ import NotFound from "./pages/NotFound";
 // Components
 import AdminLayout from "./layouts/AdminLayouts";
 import VerifiedRoute from "./components/VerifiedRoute";
+import StudentRoute from "./components/StudentRoute";
 
 // Context
 import { useAppContext } from "./context/AppContext";
@@ -85,7 +86,14 @@ export default function App() {
           }
         />
 
-        <Route path="/profile-setup" element={<ProfileSetup />} />
+        <Route
+          path="/profile-setup"
+          element={
+            <StudentRoute>
+              <ProfileSetup />
+            </StudentRoute>
+          }
+        />
 
         {/* 404 PAGE */}
         <Route path="*" element={<NotFound />} />

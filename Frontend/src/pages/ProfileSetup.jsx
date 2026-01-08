@@ -21,10 +21,10 @@ const getAcademicYear = (admissionYear) => {
 };
 
 const yearLabel = {
-  1: "First Year",
-  2: "Second Year",
-  3: "Third Year",
-  4: "Final Year",
+  1: "1st",
+  2: "2nd",
+  3: "3rd",
+  4: "4th",
 };
 
 export default function ProfileSetup() {

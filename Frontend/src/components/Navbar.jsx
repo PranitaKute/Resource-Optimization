@@ -21,7 +21,11 @@ export const Navbar = () => {
   const { isLoggedIn, userData, logout, axios } = useAppContext();
   const navbarClass = `
     fixed top-0 left-0 w-full z-50
-    ${isHomePage ? "bg-background/80 backdrop-blur-md" : "bg-transparent"}
+    ${
+      isHomePage
+        ? "bg-background/80 backdrop-blur-md"
+        : "bg-transparent backdrop-blur-xl"
+    }
     border-b border-border
     transition-all duration-300
   `;
@@ -69,9 +73,9 @@ export const Navbar = () => {
             <Link to="/#about">About</Link>
 
             {/* ✅ View Timetable (LOGIN + VERIFIED ONLY) */}
-            {isLoggedIn && userData?.isAccountVerified && (
+            {/* {isLoggedIn && userData?.isAccountVerified && (
               <Link to={timetablePath}>View Timetable</Link>
-            )}
+            )} */}
           </div>
 
           {/* Right Side */}
@@ -99,12 +103,14 @@ export const Navbar = () => {
                   </button> */}
                   <div className="flex flex-col gap-2">
                     {/* NEW PROFILE SETUP BUTTON */}
-                    <button
-                      onClick={() => navigate("/profile-setup")}
-                      className="px-4 py-2 text-sm"
-                    >
-                      Profile
-                    </button>
+                    {userData.role === "student" && (
+                      <button
+                        onClick={() => navigate("/profile-setup")}
+                        className="px-4 py-2 text-sm"
+                      >
+                        Profile
+                      </button>
+                    )}
 
                     <button
                       onClick={logout}

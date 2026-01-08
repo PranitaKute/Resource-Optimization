@@ -9,10 +9,10 @@ import { Navbar } from "../components/Navbar";
    Department → Divisions
 ========================= */
 const departmentDivisions = {
-  "Software Engineering": ["A"], // only one div
-  "AI Engineering": ["A", "B", "C"],
-  "Computer Engineering": ["A", "B"],
-  "IT Engineering": ["A", "B"],
+  "Software Engineering": ["1"], // only one div
+  "AI Engineering": ["1", "2", "3"],
+  "Computer Engineering": ["1", "2"],
+  "IT Engineering": ["1", "2"],
 };
 
 const Login = () => {

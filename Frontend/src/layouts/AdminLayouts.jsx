@@ -2,6 +2,7 @@ import { NavLink, Outlet, Link } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
+import useIdleLogout from "../hooks/useIdleLogout";
 
 export default function AdminLayout() {
   const { axios, navigate, setIsAdmin } = useAppContext();
@@ -22,10 +23,13 @@ export default function AdminLayout() {
     }
   };
 
+  // Initialize idle logout hook
+  useIdleLogout(handleLogout);
+
   // Sidebar sections
   // 1. View Section - This displays data
   const viewLinks = [
-    { 
+    {
       name: "View Timetable",
       path: "/admin/saved",
       icon: assets.saved_icon,
@@ -52,10 +56,10 @@ export default function AdminLayout() {
     {
       name: "Add Subject",
       path: "/admin/add-subject",
-      icon: assets.add_icon, // You can create a specific subject icon if needed
+      icon: assets.add_icon,
     },
   ];
-  
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ================= NAVBAR ================= */}
@@ -81,7 +85,7 @@ export default function AdminLayout() {
       {/* ================= SIDEBAR ================= */}
       <aside className="fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] w-64 bg-white border-r overflow-y-auto px-4 py-6">
         {/* Button for generate timetable */}
-        <NavLink 
+        <NavLink
           to="/admin/dashboard"
           className="flex items-center justify-center gap-2 mx-2 mb-8 py-2 rounded-xl bg-blue-600 
                       text-white font-semibold shadow-md hover:bg-blue-700 shadow-lg transition"
@@ -90,7 +94,7 @@ export default function AdminLayout() {
         </NavLink>
 
         {/* View Section */}
-        <p className="px-3 text-[15px] font-semibold text-gray-400 uppercase mb-3 tracking-widest">
+        <p className="px-3 text-[13px] font-semibold text-gray-400 uppercase mb-3 tracking-widest">
           View
         </p>
         {viewLinks.map((item) => (
@@ -98,11 +102,15 @@ export default function AdminLayout() {
             {({ isActive }) => (
               <div
                 className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all
-                  ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}
+                  ${
+                    isActive
+                      ? "bg-blue-50 text-blue-600 font-semibold"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }
                 `}
               >
                 <img src={item.icon} alt={item.name} className="w-5 h-5" />
-                <span className="text-base font-medium">{item.name}</span>
+                <span className="text-sm font-medium">{item.name}</span>
                 {isActive && (
                   <span className="ml-auto w-2 h-2 rounded-full bg-blue-500"></span>
                 )}
@@ -114,7 +122,7 @@ export default function AdminLayout() {
         <div className="my-4 border-t border-gray-100" />
 
         {/* Add / Manage Section */}
-        <p className="px-3 text-[15px] font-semibold text-gray-400 uppercase mt-6 mb-2 tracking-wide">
+        <p className="px-3 text-[13px] font-semibold text-gray-400 uppercase mt-6 mb-2 tracking-wide">
           Manage Resources
         </p>
         {manageLinks.map((item) => (
@@ -122,11 +130,15 @@ export default function AdminLayout() {
             {({ isActive }) => (
               <div
                 className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all
-                  ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}
+                  ${
+                    isActive
+                      ? "bg-blue-50 text-blue-600 font-semibold"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }
                 `}
               >
                 <img src={item.icon} alt={item.name} className="w-5 h-5" />
-                <span className="text-base font-medium">{item.name}</span>
+                <span className="text-sm font-medium">{item.name}</span>
                 {isActive && (
                   <span className="ml-auto w-2 h-2 rounded-full bg-blue-500"></span>
                 )}

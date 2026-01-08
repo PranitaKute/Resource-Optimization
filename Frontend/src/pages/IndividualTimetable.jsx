@@ -1,8 +1,12 @@
-// src/pages/IndividualTeacherTimetable.jsx
+// src/pages/IndividualTeacherTimetable.jsx - FIXED: Matches generated timetable exactly
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAppContext } from "../context/AppContext";
 import { Navbar } from "../components/Navbar";
+import {
+  TimetableTable,
+  downloadTimetableCSV,
+} from "../utils/renderTimetableCell.jsx";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -49,8 +53,11 @@ export default function IndividualTeacherTimetable() {
 
   if (!teacherTT) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
-        No timetable found
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100">
+        <div className="bg-white p-8 rounded-xl shadow-lg text-center">
+          <span className="text-6xl mb-4 block">📚</span>
+          <p className="text-gray-500 text-lg">No timetable found</p>
+        </div>
       </div>
     );
   }
@@ -60,19 +67,44 @@ export default function IndividualTeacherTimetable() {
       <Navbar />
 
       <div className="p-10 max-w-7xl mx-auto pt-24">
-        <h2 className="text-3xl font-bold mb-8 text-gray-800">
-          My Teaching Timetable — {userData.name}
-        </h2>
+        <div className="mb-8">
+          <h2 className="text-4xl font-bold text-gray-800 mb-2">
+            My Teaching Timetable
+          </h2>
+          <p className="text-lg text-gray-600">👤 {userData.name}</p>
+        </div>
 
         <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
-          <div className="bg-white p-5 border-b border-gray-100">
-            <h3 className="font-bold text-2xl text-blue-900">
-              Weekly Schedule
-            </h3>
+          {/* Header Section */}
+          <div className="bg-white p-6 border-b border-gray-200">
+            <div className="flex justify-between items-center">
+              <h3 className="font-bold text-2xl text-gray-800">
+                Weekly Schedule
+              </h3>
+
+              <button
+                onClick={() =>
+                  downloadTimetableCSV(teacherTT, userData.name, DAYS)
+                }
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg"
+              >
+                📥 Download CSV
+              </button>
+            </div>
           </div>
 
+          {/* Timetable Section */}
           <div className="p-6">
-            <TeacherTable data={teacherTT} />
+            {/* ✅ UNIFIED RENDERER - Exact same as generated timetable */}
+            <TimetableTable
+              data={teacherTT}
+              DAYS={DAYS}
+              renderOptions={{
+                showYearDivision: true, // Show which class they're teaching
+                filterByBatch: null, // No batch filtering
+                highlightBatch: false, // No highlighting
+              }}
+            />
           </div>
         </div>
       </div>
@@ -81,7 +113,9 @@ export default function IndividualTeacherTimetable() {
 }
 
 /* =======================================================
-   BUILD TIMETABLE FOR LOGGED-IN TEACHER (UNCHANGED LOGIC)
+   BUILD TIMETABLE FOR LOGGED-IN TEACHER
+   ✅ CRITICAL: Preserves TIME SLOTS, not period numbers
+   ✅ CRITICAL: Preserves lab_part for multi-hour labs
 ======================================================= */
 function buildTeacherTimetables(classTimetables, loggedTeacherName) {
   const teacherMap = {};
@@ -91,11 +125,16 @@ function buildTeacherTimetables(classTimetables, loggedTeacherName) {
     const division = doc.division;
     const table = doc.timetableData || {};
 
+    // For each day in the timetable
     Object.keys(table).forEach((day) => {
-      Object.keys(table[day] || {}).forEach((period) => {
-        const cell = table[day][period] || [];
+      const dayData = table[day] || {};
 
-        cell.forEach((entry) => {
+      // For each time slot (e.g., "08:00-09:00", "09:00-10:00")
+      Object.keys(dayData).forEach((timeSlot) => {
+        const entries = dayData[timeSlot] || [];
+
+        // Filter for logged-in teacher's classes
+        entries.forEach((entry) => {
           if (
             !entry.teacher ||
             entry.teacher.trim().toLowerCase() !== loggedTeacherName
@@ -103,12 +142,20 @@ function buildTeacherTimetables(classTimetables, loggedTeacherName) {
             return;
 
           if (!teacherMap[day]) teacherMap[day] = {};
-          if (!teacherMap[day][period]) teacherMap[day][period] = [];
+          if (!teacherMap[day][timeSlot]) teacherMap[day][timeSlot] = [];
 
-          teacherMap[day][period].push({
-            ...entry,
-            year,
-            division,
+          // ✅ PRESERVE ALL FIELDS including lab_part
+          teacherMap[day][timeSlot].push({
+            subject: entry.subject,
+            type: entry.type,
+            teacher: entry.teacher,
+            year: entry.year || year,
+            division: entry.division || division,
+            room: entry.room,
+            batch: entry.batch,
+            time_slot: timeSlot,
+            lab_part: entry.lab_part, // ✅ CRITICAL: "1/2", "2/2" etc.
+            lab_session_id: entry.lab_session_id, // ✅ CRITICAL: Session grouping
           });
         });
       });
@@ -116,80 +163,4 @@ function buildTeacherTimetables(classTimetables, loggedTeacherName) {
   });
 
   return Object.keys(teacherMap).length ? teacherMap : null;
-}
-
-/* =======================================================
-   TABLE UI — SAME STYLE AS STUDENT TIMETABLE
-======================================================= */
-function TeacherTable({ data }) {
-  const allPeriods = new Set();
-  DAYS.forEach((day) => {
-    if (data[day]) {
-      Object.keys(data[day]).forEach((p) => allPeriods.add(Number(p)));
-    }
-  });
-  const sortedPeriods = Array.from(allPeriods).sort((a, b) => a - b);
-
-  return (
-    <div className="overflow-x-auto rounded-2xl border border-gray-100">
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="bg-blue-600 text-white font-bold">
-            <th className="border p-4 w-24 text-center">Period</th>
-            {DAYS.map(
-              (d) =>
-                data[d] && (
-                  <th key={d} className="border p-4 min-w-[160px] text-center">
-                    {d}
-                  </th>
-                )
-            )}
-          </tr>
-        </thead>
-
-        <tbody>
-          {sortedPeriods.map((p) => (
-            <tr key={p} className="hover:bg-blue-50/30 transition-colors">
-              <td className="border p-4 font-black bg-blue-50 text-blue-700 text-center text-lg">
-                P{p}
-              </td>
-
-              {DAYS.map(
-                (d) =>
-                  data[d] && (
-                    <td key={d} className="border p-3 align-top min-h-[110px]">
-                      {(data[d][p] || []).map((entry, i) => (
-                        <div
-                          key={i}
-                          className="p-3 mb-2 border-l-4 rounded-xl shadow-md bg-blue-50 border-blue-500 transition-transform hover:scale-[1.02]"
-                        >
-                          <div className="font-bold text-gray-900 text-[13px]">
-                            {entry.subject}
-                          </div>
-
-                          <div className="text-[11px] text-gray-600 mt-2 space-y-1">
-                            <div>
-                              👥 {entry.year} — Div {entry.division}
-                            </div>
-                            <div>📍 {entry.room}</div>
-                          </div>
-                        </div>
-                      ))}
-
-                      {(data[d][p] || []).length === 0 && (
-                        <div className="py-8 text-center">
-                          <span className="text-gray-300 font-medium tracking-widest text-[10px] uppercase">
-                            No Class
-                          </span>
-                        </div>
-                      )}
-                    </td>
-                  )
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
 }

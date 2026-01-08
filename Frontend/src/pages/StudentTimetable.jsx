@@ -25,10 +25,10 @@ const getAcademicYearLabel = (admissionYear) => {
   const academicBase = month >= 6 ? currentYear : currentYear - 1;
   const yearNum = academicBase - admissionYear + 1;
 
-  if (yearNum === 1) return "First";
-  if (yearNum === 2) return "Second";
-  if (yearNum === 3) return "Third";
-  if (yearNum === 4) return "Final";
+  if (yearNum === 1) return "1st";
+  if (yearNum === 2) return "2nd";
+  if (yearNum === 3) return "3rd";
+  if (yearNum === 4) return "4th";
 
   return null;
 };

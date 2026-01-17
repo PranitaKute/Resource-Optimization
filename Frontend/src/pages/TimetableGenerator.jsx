@@ -135,18 +135,18 @@ export default function TimetableGenerator() {
         </div>
 
         {/* Import Configuration Button */}
-        <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg sm:rounded-xl border-2 border-green-200">
+        <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-emerald-50 rounded-lg sm:rounded-xl border-2 border-blue-200">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
             <div className="flex-1">
               <h3 className="font-semibold text-gray-800 mb-1 flex items-center gap-2 text-sm sm:text-base">
-                <span className="text-lg sm:text-xl">📥</span>
+                <span className="text-lg sm:text-xl"></span>
                 Import Existing Configuration
               </h3>
               <p className="text-xs sm:text-sm text-gray-600">
                 Load previously exported configuration file
               </p>
             </div>
-            <label className="px-4 sm:px-6 py-2 sm:py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg sm:rounded-xl font-semibold cursor-pointer transition-all shadow-md hover:shadow-lg text-sm sm:text-base whitespace-nowrap">
+            <label className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg sm:rounded-xl font-semibold cursor-pointer transition-all shadow-md hover:shadow-lg text-sm sm:text-base whitespace-nowrap">
               Choose File
               <input
                 type="file"
@@ -160,7 +160,7 @@ export default function TimetableGenerator() {
 
         <div className="mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-4 flex items-center gap-2">
-            <span className="text-xl sm:text-2xl">📚</span>
+            <span className="text-xl sm:text-2xl"></span>
             Select Academic Years & Semesters
           </h2>
           <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">

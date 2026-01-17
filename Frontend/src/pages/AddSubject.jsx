@@ -205,7 +205,7 @@ export default function AddSubject() {
   const getTypeColor = (type) => {
     switch (type) {
       case "Theory": return "bg-blue-100 text-blue-700";
-      case "Lab": return "bg-purple-100 text-purple-700";
+      case "Lab": return "bg-blue-100 text-blue-700";
       case "Tutorial": return "bg-green-100 text-green-700";
       default: return "bg-gray-100 text-gray-700";
     }
@@ -213,32 +213,32 @@ export default function AddSubject() {
 
   const getTypeIcon = (type) => {
     switch (type) {
-      case "Theory": return "📖";
-      case "Lab": return "🔬";
-      case "Tutorial": return "✏️";
+      case "Theory": return "";
+      case "Lab": return "";
+      case "Tutorial": return "";
       default: return "📚";
     }
   };
 
   return (
-    <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gray-50 min-h-screen">
+     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 py-4 sm:py-6 md:py-10 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-4 sm:mb-6 md:mb-8">
+        {/* <div className="mb-4 sm:mb-6 md:mb-8">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2 sm:gap-3 mb-2">
-            <span className="text-2xl sm:text-3xl md:text-4xl">📚</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl"></span>
             <span>Subject Management</span>
           </h2>
           <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
             Add subjects with their Theory, Lab, and Tutorial components
           </p>
-        </div>
+        </div> */}
 
         {/* Add/Edit Subject Form */}
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border p-4 sm:p-6 md:p-8 mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4">
             <h3 className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2">
-              <span>{editMode ? "✏️" : "➕"}</span>
+              <span>{editMode ? "" : ""}</span>
               {editMode ? "Edit Subject" : "Add New Subject"}
             </h3>
             {editMode && (
@@ -342,10 +342,10 @@ export default function AddSubject() {
                     id="hasTheory"
                     checked={hasTheory}
                     onChange={(e) => setHasTheory(e.target.checked)}
-                    className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                    className="w-4 h-4 sm:w-5 sm:h-5  accent-blue-600 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
                   />
                   <label htmlFor="hasTheory" className="text-base sm:text-lg font-bold text-blue-900 flex items-center gap-2 cursor-pointer">
-                    <span>📖</span>
+                    <span></span>
                     Theory Component
                   </label>
                 </div>
@@ -370,7 +370,7 @@ export default function AddSubject() {
             </div>
 
             {/* Lab/Tutorial Component */}
-            <div className="bg-purple-50 border-2 border-purple-200 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6">
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <input
@@ -378,10 +378,10 @@ export default function AddSubject() {
                     id="hasLabTutorial"
                     checked={hasLabTutorial}
                     onChange={(e) => setHasLabTutorial(e.target.checked)}
-                    className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500 cursor-pointer"
+                    className="w-4 h-4 sm:w-5 sm:h-5  accent-blue-600 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
                   />
-                  <label htmlFor="hasLabTutorial" className="text-base sm:text-lg font-bold text-purple-900 flex items-center gap-2 cursor-pointer">
-                    <span>🔬</span>
+                  <label htmlFor="hasLabTutorial" className="text-base sm:text-lg font-bold text-blue-900 flex items-center gap-2 cursor-pointer">
+                    <span></span>
                     Lab / Tutorial Component
                   </label>
                 </div>
@@ -391,13 +391,13 @@ export default function AddSubject() {
                 <div className="space-y-3 sm:space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-purple-900 mb-1.5 sm:mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-blue-900 mb-1.5 sm:mb-2">
                         Type *
                       </label>
                       <select
                         value={labTutorialType}
                         onChange={(e) => setLabTutorialType(e.target.value)}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-purple-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-blue-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
                       >
                         <option value="Lab">Lab</option>
                         <option value="Tutorial">Tutorial</option>
@@ -405,7 +405,7 @@ export default function AddSubject() {
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-purple-900 mb-1.5 sm:mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-blue-900 mb-1.5 sm:mb-2">
                         Hours per Week *
                       </label>
                       <input
@@ -420,7 +420,7 @@ export default function AddSubject() {
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-purple-900 mb-1.5 sm:mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-blue-900 mb-1.5 sm:mb-2">
                         Number of Batches
                       </label>
                       <input
@@ -429,19 +429,19 @@ export default function AddSubject() {
                         max="10"
                         value={batches}
                         onChange={(e) => setBatches(parseInt(e.target.value))}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-purple-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-blue-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                       />
                     </div>
 
                     {labTutorialType === "Lab" && (
                       <div>
-                        <label className="block text-xs sm:text-sm font-semibold text-purple-900 mb-1.5 sm:mb-2">
+                        <label className="block text-xs sm:text-sm font-semibold text-blue-900 mb-1.5 sm:mb-2">
                           Continuous Duration (hours)
                         </label>
                         <select
                           value={labDuration}
                           onChange={(e) => setLabDuration(parseInt(e.target.value))}
-                          className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-purple-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                          className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-blue-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                         >
                           <option value={1}>1 Hour</option>
                           <option value={2}>2 Hours (Continuous)</option>
@@ -452,8 +452,8 @@ export default function AddSubject() {
                   </div>
 
                   {labTutorialType === "Lab" && (
-                    <p className="text-xs sm:text-sm text-purple-700 flex items-start gap-2">
-                      <span>💡</span>
+                    <p className="text-xs sm:text-sm text-blue-700 flex items-start gap-2">
+                      <span></span>
                       <span>Lab sessions occupy {labDuration} continuous time slot{labDuration > 1 ? 's' : ''} without breaks</span>
                     </p>
                   )}
@@ -475,7 +475,7 @@ export default function AddSubject() {
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border p-4 sm:p-6 md:p-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4">
             <h3 className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2 flex-1 min-w-0">
-              <span>📋</span>
+              <span></span>
               <span className="truncate">Subjects for {formData.year} - Semester {formData.semester}</span>
             </h3>
             <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap">
@@ -540,14 +540,14 @@ export default function AddSubject() {
                         className="flex-1 sm:flex-initial px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-xs sm:text-sm font-semibold whitespace-nowrap"
                         title="Edit subject"
                       >
-                        ✏️ Edit
+                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(subject._id)}
                         className="flex-1 sm:flex-initial px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all text-xs sm:text-sm font-semibold whitespace-nowrap"
                         title="Delete subject"
                       >
-                        🗑️ Delete
+                         Delete
                       </button>
                     </div>
                   </div>

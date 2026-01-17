@@ -5,12 +5,14 @@ import {
   TimetableTable,
   downloadTimetableCSV,
 } from "../utils/renderTimetableCell.jsx";
+import { useNavigate } from "react-router-dom";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function TeacherTimetable() {
   const [teacherTTs, setTeacherTTs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchAndBuild = async () => {
@@ -47,19 +49,53 @@ export default function TeacherTimetable() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 p-3 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-4 sm:mb-6 md:mb-8">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
-            Teacher Timetables
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">
-            Generated dynamically from class timetables • Always up-to-date
-          </p>
-        </div>
+        <div className="pt-0 px-3 sm:px-4 md:px-6 pb-3 sm:pb-4 md:pb-6 max-w-6xl mx-auto">
+  <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+    Teacher Timetables
+  </h2>
+</div>
+
 
         {teacherTTs.length === 0 && (
-          <div className="bg-white p-6 sm:p-8 rounded-xl border text-center text-sm sm:text-base text-gray-500">
-            No teacher timetables found. Generate class timetables first.
-          </div>
+         <div className="flex flex-col items-center justify-center h-[60vh] text-center">
+  
+  {/* Icon */}
+  <div className="w-20 h-20 rounded-full
+                  bg-gradient-to-br from-blue-100 to-cyan-100
+                  flex items-center justify-center mb-6">
+    <span className="text-4xl">📅</span>
+  </div>
+
+  {/* Title */}
+  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+    No Timetables Yet
+  </h2>
+
+  {/* Description */}
+  <p className="text-gray-500 max-w-md mb-6">
+    You haven’t generated or saved any timetables yet.
+    Start by configuring years, subjects, teachers, and rooms.
+  </p>
+
+  {/* Primary Action */}
+  <button
+    onClick={() => navigate("/admin/dashboard")}
+    className="px-6 py-3
+               bg-gradient-to-r from-blue-600 to-cyan-400
+               text-white font-semibold rounded-xl
+               shadow-lg hover:shadow-xl
+               transition-all flex items-center gap-2"
+  >
+    <span>⚡</span>
+    Generate Your First Timetable
+  </button>
+
+  {/* Secondary Hint */}
+  <p className="mt-4 text-xs text-blue-600">
+    You can always edit and regenerate later
+  </p>
+</div>
+
         )}
 
         {teacherTTs.map((tt) => (

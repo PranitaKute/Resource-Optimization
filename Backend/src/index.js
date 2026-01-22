@@ -39,7 +39,7 @@ console.log("Loaded admin:", process.env.ADMIN_EMAIL);
 // ----------------------------------------------
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:8080", "http://10.25.4.229:8080"],
+    origin: ["http://localhost:5173", "http://localhost:8080", "https://resourceoptfrontendfolder.vercel.app"],
     credentials: true,
   })
 );
@@ -56,7 +56,7 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: "none",
-      secure: false,
+      secure: true,
       maxAge: 1000 * 60 * 60 * 4, // 4 hours
     },
   })

@@ -2,9 +2,11 @@ import axios from "axios";
 
 export async function callPythonScheduler(payload) {
   try {
-    const response = await axios.post("http://127.0.0.1:6000/generate", payload, {
+    const response = await axios.post("${process.env.PYTHON_API_URL}/generate", payload, {
       timeout: 20000,
     });
+
+
 
     return response.data;
   } catch (err) {

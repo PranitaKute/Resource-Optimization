@@ -2,8 +2,6 @@ from flask import Flask, request, jsonify
 from solver.timetable_solver import solve_timetable
 import os
 import traceback
-from flask_cors import CORS
-CORS(app)
 
 
 app = Flask(__name__)

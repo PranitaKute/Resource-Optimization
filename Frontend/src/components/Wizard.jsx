@@ -1,10 +1,9 @@
-  // Wizard.jsx - FIXED: Proper room mapping structure for solver
   import React, { useState, useMemo, useEffect } from "react";
   import YearPanel from "./YearPanel";
   import TeacherForm from "./TeacherForm";
   import RoomAllocation from "./RoomAllocation";
   import SchedulerResult from "./SchedulerResult";
-  import axios from "axios";
+  import axiosInstance from "../utils/axiosInstance";
 
   function calculatePeriodsPerDay(timeConfig) {
     if (!timeConfig) return 6;
@@ -120,10 +119,11 @@
       });
     }, [yearData]);
 
-    // ✅ FIXED: Build room mappings that solver can understand
     const buildRoomMappingsForSolver = () => {
       const mappings = {};
-      
+      console.log("TEACHERS SENT:", teachers);
+      console.log("TEACHER SUBJECTS:", teachers[0].subjects);
+
       console.log("🔧 Building room mappings from assignments:", rooms);
       
       rooms.forEach(room => {
@@ -138,21 +138,17 @@
           const subjectCode = assignment.code;
           
           if (!subjectCode) {
-            // Division assignment (classroom)
             console.log(`  → Division assignment: ${year} Div ${assignment.division}`);
             return;
           }
           
-          // Subject assignment (lab/tutorial)
           const subjectType = assignment.type;
           const totalBatches = assignment.totalBatches || 1;
           
-          // ✅ Create mapping key: "year_subjectCode_type"
           const mappingKey = `${year}_${subjectCode}_${subjectType}`;
           
           console.log(`  → Subject assignment: ${subjectCode} (${subjectType}) - ${totalBatches} batches`);
           
-          // ✅ CRITICAL: Map ALL batches to THIS room
           const batchMappings = [];
           for (let batchNum = 1; batchNum <= totalBatches; batchNum++) {
             batchMappings.push({
@@ -160,7 +156,7 @@
               room: roomId,
               roomName: roomName
             });
-            console.log(`    ✅ Mapped batch ${batchNum} → ${roomName}`);
+            console.log(`   Mapped batch ${batchNum} → ${roomName}`);
           }
           
           mappings[mappingKey] = {
@@ -209,23 +205,23 @@
           return;
         }
 
-        // ✅ Build proper room mappings
         const roomMappings = buildRoomMappingsForSolver();
 
         const payload = {
           years: yearData,
           teachers: teachers,
           rooms: rooms,
-          roomMappings: roomMappings  // ✅ Send properly structured mappings
+          roomMappings: roomMappings
         };
 
         console.log("📤 Sending payload with room mappings:", payload);
 
-        const res = await axios.post(
+        const res = await axiosInstance.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/scheduler/generate`,
           payload
         );
-
+        
+        console.log("SOLVER RESPONSE:", res.data);
         const timetable = res.data.timetable || res.data;
         if (!timetable) {
           alert("Invalid scheduler response");
@@ -284,7 +280,7 @@
       }
 
       try {
-        const res = await axios.post(
+        const res = await axiosInstance.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/timetable/save`,
           payload
         );

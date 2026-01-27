@@ -7,7 +7,7 @@ import { useAppContext } from "@/context/AppContext";
 export const Hero = () => {
   const { isLoggedIn, userData, logout, axios } = useAppContext();
 
-  // ✅ SAFE ROLE-BASED PATH
+  //SAFE ROLE-BASED PATH
   const role = userData?.role?.trim().toLowerCase();
   const timetablePath =
     role === "teacher" ? "/teacher-timetable" : "/student-timetable";

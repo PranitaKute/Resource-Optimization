@@ -114,27 +114,7 @@ const ResetPassword = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-300 rounded-full blur-2xl opacity-10 animate-blob-slow animation-delay-3000"></div>
       </div>
 
-      {/* TOP LEFT ResourceOPT */}
-      {/*}  <div className="absolute left-5 sm:left-10 top-5 flex items-center space-x-2 cursor-pointer z-20">
-        <div
-          onClick={() => navigate("/")}
-          className="flex items-center space-x-2"
-        >
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">R</span>
-          </div>
-          <span className="font-bold text-xl text-gray-800">ResourceOPT</span>
-        </div>
-      </div>
-
-      
-    <img
-        src={assets.logo}
-        className="absolute right-4 sm:right-10 top-5 w-20 sm:w-24 z-20 cursor-pointer"
-        onClick={() => navigate("/")}
-      />
-
-      */}
+     
       <Navbar />
 
       {/* CONTENT CARD */}

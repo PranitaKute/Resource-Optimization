@@ -11,7 +11,6 @@ export default function RoomAllocation({
 }) {
   const { axios } = useAppContext();
   
-  // State management
   const [dbRooms, setDbRooms] = useState([]);
   const [selectedRoomId, setSelectedRoomId] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -19,31 +18,26 @@ export default function RoomAllocation({
   const [selectedAssignments, setSelectedAssignments] = useState([]);
   const [filterType, setFilterType] = useState("all");
 
-  // ✅ FIX: Fetch rooms filtered by selected years
   useEffect(() => {
     const fetchDbRooms = async () => {
       try {
         const { data } = await axios.get("/api/rooms/all");
         if (data.success) {
-          // Get all selected years from yearData
           const selectedYears = Object.keys(yearData);
           
           console.log("Selected years:", selectedYears);
           console.log("All rooms from DB:", data.rooms);
           
-          // ✅ FIX: Filter rooms based on selected years
           const availableRooms = data.rooms.filter(room => {
-            // Include if room is Shared
             if (room.primaryYear === "Shared") {
-              console.log(`✅ Including shared room: ${room.name}`);
+              console.log(` Including shared room: ${room.name}`);
               return true;
             }
-            // Include if room's primaryYear matches any selected year
             const yearMatch = selectedYears.includes(room.primaryYear);
             if (yearMatch) {
-              console.log(`✅ Including year-specific room: ${room.name} (${room.primaryYear})`);
+              console.log(` Including year-specific room: ${room.name} (${room.primaryYear})`);
             } else {
-              console.log(`❌ Excluding room: ${room.name} (${room.primaryYear}) - not in selected years`);
+              console.log(` Excluding room: ${room.name} (${room.primaryYear}) - not in selected years`);
             }
             return yearMatch;
           });
@@ -59,14 +53,12 @@ export default function RoomAllocation({
     fetchDbRooms();
   }, [axios, yearData]);
 
-  // When room is selected from dropdown
   useEffect(() => {
     if (selectedRoomId) {
       const room = dbRooms.find((r) => r._id === selectedRoomId);
       setSelectedRoom(room);
       setSelectedAssignments([]);
       
-      // Auto-determine assignment type based on room type
       if (room?.type === "Classroom") {
         setAssignmentType("division");
       } else {
@@ -78,7 +70,6 @@ export default function RoomAllocation({
     }
   }, [selectedRoomId, dbRooms]);
 
-  // Get all divisions across all years
   const getAllDivisions = () => {
     const divisions = [];
     Object.keys(yearData).forEach(year => {
@@ -94,7 +85,6 @@ export default function RoomAllocation({
     return divisions;
   };
 
-  // Get all subjects that match room type
   const getRelevantSubjects = () => {
     const subjects = [];
     

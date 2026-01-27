@@ -1,12 +1,5 @@
-// src/utils/renderTimetableCell.jsx
-// ✅ ENHANCED: Mobile-responsive with compact time column
-
 import { formatTimeSlot } from './timeFormat';
 
-/**
- * Universal cell renderer for timetables
- * Used across: Generated, Saved, Teacher, and Student timetables
- */
 
 export function renderTimetableCell(cell, options = {}) {
   const {
@@ -127,9 +120,6 @@ export function renderTimetableCell(cell, options = {}) {
   );
 }
 
-/**
- * Helper to download timetable as CSV
- */
 export function downloadTimetableCSV(table, filename, DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]) {
   const firstDay = DAYS.find(d => table[d] && Object.keys(table[d]).length > 0);
   if (!firstDay) return;
@@ -188,9 +178,6 @@ export function downloadTimetableCSV(table, filename, DAYS = ["Mon", "Tue", "Wed
   link.click();
 }
 
-/**
- * ✅ ENHANCED: Responsive table with compact time column on mobile
- */
 export function TimetableTable({ data, DAYS, renderOptions = {} }) {
   if (!data) return null;
 
@@ -205,12 +192,12 @@ export function TimetableTable({ data, DAYS, renderOptions = {} }) {
 
   return (
     <div className="w-full overflow-x-auto rounded-xl sm:rounded-2xl border border-gray-200 shadow-lg">
-      {/* ✅ RESPONSIVE: Horizontal scroll container */}
+      {/*RESPONSIVE: Horizontal scroll container */}
       <div className="inline-block min-w-full align-middle">
         <table className="min-w-full border-collapse text-xs sm:text-sm">
           <thead>
             <tr className="bg-blue-600 text-white font-bold">
-              {/* ✅ COMPACT TIME COLUMN on mobile */}
+              {/*COMPACT TIME COLUMN on mobile */}
               <th className="border border-gray-300 p-1.5 sm:p-2 md:p-3 text-center text-[10px] sm:text-xs md:text-sm sticky left-0 bg-blue-600 z-20 w-16 sm:w-24 md:w-28">
                 <div className="flex flex-col">
                   <span className="hidden sm:inline">Time Slot</span>
@@ -231,10 +218,10 @@ export function TimetableTable({ data, DAYS, renderOptions = {} }) {
           <tbody>
             {sortedTimeSlots.map((timeSlot) => (
               <tr key={timeSlot} className="hover:bg-blue-50/30 transition-colors">
-                {/* ✅ COMPACT TIME COLUMN: Smaller on mobile */}
+                {/*COMPACT TIME COLUMN: Smaller on mobile */}
                 <td className="border border-gray-300 p-1 sm:p-2 md:p-3 font-black bg-blue-50 text-blue-700 text-center text-[9px] sm:text-xs md:text-sm sticky left-0 bg-blue-50 z-10">
                   <div className="flex flex-col leading-tight">
-                    {/* ✅ Split time display for better mobile fit */}
+                    {/*Split time display for better mobile fit */}
                     {formatTimeSlot(timeSlot).split(' - ').map((time, idx) => (
                       <span key={idx} className="whitespace-nowrap">
                         {time}

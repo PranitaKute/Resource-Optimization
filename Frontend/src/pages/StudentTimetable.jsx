@@ -1,6 +1,5 @@
-// src/pages/StudentTimetable.jsx - ✅ FIXED: Proper spacing below navbar
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import { useAppContext } from "../context/AppContext";
 import { Navbar } from "../components/Navbar";
 import {
@@ -10,10 +9,7 @@ import {
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-/* =========================
-   Academic Year Resolver
-   (from admissionYear)
-========================= */
+
 const getAcademicYearLabel = (admissionYear) => {
   if (!admissionYear) return null;
 
@@ -21,7 +17,6 @@ const getAcademicYearLabel = (admissionYear) => {
   const currentYear = now.getFullYear();
   const month = now.getMonth(); // Jan = 0
 
-  // Academic year starts around July
   const academicBase = month >= 6 ? currentYear : currentYear - 1;
   const yearNum = academicBase - admissionYear + 1;
 
@@ -40,7 +35,10 @@ export default function StudentTimetable() {
 
   const fetchTimetables = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/timetable/all`);
+      // FIXED: Use axiosInstance which includes withCredentials
+      const res = await axiosInstance.get("/api/timetable/all");
+
+      console.log("Student timetable fetch response:", res.data);
 
       if (res.data.success) {
         let allData = res.data.timetables;
@@ -48,18 +46,27 @@ export default function StudentTimetable() {
         if (userData?.role === "student") {
           const academicYear = getAcademicYearLabel(userData?.admissionYear);
 
+          console.log("Filtering for:", {
+            year: academicYear,
+            division: userData.division,
+            department: userData.department
+          });
+
           allData = allData.filter(
             (item) =>
               item.year === academicYear &&
               String(item.division) === String(userData.division) &&
               item.department === userData.department
           );
+
+          console.log(` Found ${allData.length} matching timetables`);
         }
 
         setTimetables(allData);
       }
     } catch (err) {
       console.error("Fetch error:", err);
+      console.error("Error response:", err.response?.data);
     }
     setLoading(false);
   };
@@ -88,7 +95,6 @@ export default function StudentTimetable() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100">
       <Navbar />
 
-      {/* ✅ FIXED: Proper top padding to prevent content hiding under navbar */}
       <div className="pt-16 sm:pt-20 md:pt-24 px-4 sm:px-6 md:px-8 lg:px-10 pb-10 max-w-7xl mx-auto">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 md:mb-8 text-gray-800">
           {userData?.role === "student"
@@ -143,7 +149,7 @@ export default function StudentTimetable() {
               </div>
             </div>
 
-            {/* ✅ RESPONSIVE: Proper overflow handling */}
+            {/*RESPONSIVE: Proper overflow handling */}
             <div className="p-3 sm:p-4 md:p-6 overflow-x-auto">
               <TimetableTable
                 data={item.timetableData}

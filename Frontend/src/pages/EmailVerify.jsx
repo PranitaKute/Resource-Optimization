@@ -7,14 +7,12 @@ import { Navbar } from "../components/Navbar";
 const EmailVerify = () => {
   const navigate = useNavigate();
 
-  // ✅ use axios from AppContext ONLY
+  //use axios from AppContext ONLY
   const { axios, userData, getUserData } = useAppContext();
 
   const inputRefs = useRef([]);
 
-  // ==========================
   // OTP INPUT HANDLERS
-  // ==========================
   const handleInput = (e, index) => {
     if (e.target.value && index < 5) {
       inputRefs.current[index + 1].focus();
@@ -36,9 +34,7 @@ const EmailVerify = () => {
     });
   };
 
-  // ==========================
   // VERIFY OTP
-  // ==========================
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -66,9 +62,7 @@ const EmailVerify = () => {
     }
   };
 
-  // ==========================
   // AUTO SEND OTP ON PAGE LOAD
-  // ==========================
   useEffect(() => {
     const sendOtp = async () => {
       try {

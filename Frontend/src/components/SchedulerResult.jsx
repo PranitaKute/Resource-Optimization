@@ -1,6 +1,5 @@
-// src/pages/SchedulerResult1.jsx - UPDATED: Uses unified renderer
 import React from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { renderTimetableCell, downloadTimetableCSV } from "../utils/renderTimetableCell";
 import { formatTimeSlot } from "../utils/timeFormat";
@@ -56,29 +55,24 @@ export default function SchedulerResult({ result, onBack, onSave }) {
   const allConflicts = [...conflicts, ...roomConflicts];
   const hasIssues = unallocated.length > 0 || allConflicts.length > 0 || criticalIssues.length > 0;
 
-// FIXED: defaultSave function with improved year parsing
 const defaultSave = async (outerKey, table, isTeacher = false) => {
   let payload = {};
   if (isTeacher) {
-    // Teacher timetables are not saved separately
     toast.info("Teacher timetables are derived from class timetables and cannot be saved separately.");
     return { success: true, message: "Teacher timetables are derived dynamically" };
   } else {
-    // Parse outerKey format: "3rd Div 1" or "1st Year Div 1"
     const keyStr = String(outerKey);
     let year, division;
     
     console.log("🔍 Parsing outerKey:", keyStr);
     
     if (keyStr.includes(" Div ")) {
-      // Format: "year Div division"
       const divIndex = keyStr.indexOf(" Div ");
       year = keyStr.substring(0, divIndex).trim();
       division = keyStr.substring(divIndex + 5).trim();
       
       console.log("Extracted - Year:", year, "Division:", division);
     } else {
-      // Fallback: try to split and extract
       const parts = keyStr.split(" ");
       const divIndex = parts.findIndex(p => p.toLowerCase() === "div");
       
@@ -93,14 +87,11 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
       }
     }
 
-    // ✅ FIX: Ensure division is valid (should be numeric or alpha like "A", "B")
-    // Accept both numeric (1, 2, 3) and alphabetic (A, B, C) divisions
     if (!/^[0-9A-Za-z]+$/.test(division)) {
       console.warn("⚠️ Invalid division format:", division, "- defaulting to 1");
       division = "1";
     }
 
-    // Ensure year is not empty
     if (!year || year.length === 0) {
       console.error("Could not parse year from outerKey:", outerKey);
       toast.error("Failed to parse timetable information. Please try again.");
@@ -117,7 +108,7 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
   }
 
   try {
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/timetable/save`, payload);
+    const res = await axiosInstance.post(`${import.meta.env.VITE_BACKEND_URL}/api/timetable/save`, payload);
     
     console.log("📥 Server response:", res.data);
     
@@ -162,7 +153,7 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
       try {
         const maybePromise = onSave(outerKey, table, isTeacher);
         if (maybePromise && typeof maybePromise.then === "function") {
-          // ✅ AWAIT the promise and check the result
+          //AWAIT the promise and check the result
           const result = await maybePromise;
           
           // Only show success if the save actually succeeded
@@ -500,7 +491,7 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
                       </div>
                     </div>
 
-                    {/* ✅ USE UNIFIED RENDERER */}
+                    {/*USE UNIFIED RENDERER */}
                     <div className="overflow-x-auto rounded-lg sm:rounded-xl border border-gray-200 -mx-1 sm:mx-0">
                       <table className="min-w-full border-collapse text-xs sm:text-sm">
                         <thead>
@@ -613,7 +604,7 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
                     </div>
                   </div>
 
-                  {/* ✅ USE UNIFIED RENDERER WITH YEAR/DIVISION */}
+                  {/*USE UNIFIED RENDERER WITH YEAR/DIVISION */}
                   <div className="overflow-x-auto rounded-lg sm:rounded-xl border border-gray-200 -mx-1 sm:mx-0">
                     <table className="min-w-full border-collapse text-xs sm:text-sm">
                       <thead>

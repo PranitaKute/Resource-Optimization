@@ -1,6 +1,5 @@
-// src/pages/TeacherTimetable.jsx - FIXED: Matches generated timetable exactly
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance"; 
 import {
   TimetableTable,
   downloadTimetableCSV,
@@ -17,17 +16,27 @@ export default function TeacherTimetable() {
   useEffect(() => {
     const fetchAndBuild = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/timetable/all`);
+        const res = await axiosInstance.get("/api/timetable/all");
+        
+        console.log("Teacher timetable fetch response:", res.data);
+        
         if (res.data.success) {
-          // Build teacher timetables dynamically from class timetables
           const teacherMap = buildTeacherTimetablesFromClass(
             res.data.timetables || []
           );
           setTeacherTTs(teacherMap);
+          console.log(` Built ${teacherMap.length} teacher timetables`);
         }
       } catch (err) {
         console.error("Fetch error:", err);
-        alert("Failed to fetch timetables");
+        console.error("Error response:", err.response?.data);
+        
+        if (err.response?.status === 401) {
+          alert("Session expired. Please login again.");
+          navigate("/admin/login");
+        } else {
+          alert(err.response?.data?.message || "Failed to fetch timetables");
+        }
       }
       setLoading(false);
     };
@@ -73,7 +82,7 @@ export default function TeacherTimetable() {
 
   {/* Description */}
   <p className="text-gray-500 max-w-md mb-6">
-    You haven’t generated or saved any timetables yet.
+    You haven't generated or saved any timetables yet.
     Start by configuring years, subjects, teachers, and rooms.
   </p>
 
@@ -127,7 +136,7 @@ export default function TeacherTimetable() {
 
             {/* Timetable Section */}
             <div className="p-3 sm:p-4 md:p-6 overflow-x-auto">
-              {/* ✅ UNIFIED RENDERER - Exact same as generated timetable */}
+              {/*UNIFIED RENDERER - Exact same as generated timetable */}
               <TimetableTable
                 data={tt.timetable}
                 DAYS={DAYS}
@@ -145,11 +154,6 @@ export default function TeacherTimetable() {
   );
 }
 
-/**
- * Build teacher timetables DYNAMICALLY from class timetables
- * ✅ CRITICAL: Preserves TIME SLOTS, not period numbers
- * ✅ CRITICAL: Preserves lab_part for multi-hour continuous labs
- */
 function buildTeacherTimetablesFromClass(classTimetables) {
   const teacherMap = {};
 
@@ -184,7 +188,7 @@ function buildTeacherTimetablesFromClass(classTimetables) {
           }
 
           // Add this class to teacher's timetable
-          // ✅ PRESERVE ALL FIELDS including lab_part for multi-hour labs
+          //PRESERVE ALL FIELDS including lab_part for multi-hour labs
           teacherMap[teacher][day][timeSlot].push({
             subject: entry.subject,
             type: entry.type,
@@ -194,8 +198,8 @@ function buildTeacherTimetablesFromClass(classTimetables) {
             room: entry.room,
             batch: entry.batch,
             time_slot: timeSlot,
-            lab_part: entry.lab_part, // ✅ CRITICAL: Preserve lab_part (e.g., "1/2", "2/2")
-            lab_session_id: entry.lab_session_id, // ✅ CRITICAL: Preserve session ID for grouping
+            lab_part: entry.lab_part, //CRITICAL: Preserve lab_part (e.g., "1/2", "2/2")
+            lab_session_id: entry.lab_session_id, //CRITICAL: Preserve session ID for grouping
           });
         });
       });

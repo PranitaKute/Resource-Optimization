@@ -1,6 +1,6 @@
-// src/pages/IndividualTeacherTimetable.jsx - FIXED: Matches generated timetable exactly
+// src/pages/IndividualTeacherTimetable.jsx - FIXED: Uses axiosInstance for auth
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance"; // ✅ FIXED: Use axiosInstance
 import { useAppContext } from "../context/AppContext";
 import { Navbar } from "../components/Navbar";
 import {
@@ -18,7 +18,10 @@ export default function IndividualTeacherTimetable() {
   useEffect(() => {
     const fetchAndBuild = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/timetable/all`);
+        // ✅ FIXED: Use axiosInstance which includes withCredentials
+        const res = await axiosInstance.get("/api/timetable/all");
+
+        console.log("Individual teacher fetch response:", res.data);
 
         if (res.data.success && userData?.name) {
           const teacherName = userData.name.trim().toLowerCase();
@@ -29,9 +32,16 @@ export default function IndividualTeacherTimetable() {
           );
 
           setTeacherTT(teacherMap);
+          
+          if (teacherMap) {
+            console.log(`✅ Built timetable for ${userData.name}`);
+          } else {
+            console.log(`⚠️ No timetable found for ${userData.name}`);
+          }
         }
       } catch (err) {
         console.error("Fetch error:", err);
+        console.error("Error response:", err.response?.data);
       } finally {
         setLoading(false);
       }
@@ -95,7 +105,7 @@ export default function IndividualTeacherTimetable() {
 
           {/* Timetable Section */}
           <div className="p-6">
-            {/* ✅ UNIFIED RENDERER - Exact same as generated timetable */}
+            {/*UNIFIED RENDERER - Exact same as generated timetable */}
             <TimetableTable
               data={teacherTT}
               DAYS={DAYS}
@@ -114,8 +124,8 @@ export default function IndividualTeacherTimetable() {
 
 /* =======================================================
    BUILD TIMETABLE FOR LOGGED-IN TEACHER
-   ✅ CRITICAL: Preserves TIME SLOTS, not period numbers
-   ✅ CRITICAL: Preserves lab_part for multi-hour labs
+  CRITICAL: Preserves TIME SLOTS, not period numbers
+  CRITICAL: Preserves lab_part for multi-hour labs
 ======================================================= */
 function buildTeacherTimetables(classTimetables, loggedTeacherName) {
   const teacherMap = {};
@@ -144,7 +154,7 @@ function buildTeacherTimetables(classTimetables, loggedTeacherName) {
           if (!teacherMap[day]) teacherMap[day] = {};
           if (!teacherMap[day][timeSlot]) teacherMap[day][timeSlot] = [];
 
-          // ✅ PRESERVE ALL FIELDS including lab_part
+          //PRESERVE ALL FIELDS including lab_part
           teacherMap[day][timeSlot].push({
             subject: entry.subject,
             type: entry.type,
@@ -154,8 +164,8 @@ function buildTeacherTimetables(classTimetables, loggedTeacherName) {
             room: entry.room,
             batch: entry.batch,
             time_slot: timeSlot,
-            lab_part: entry.lab_part, // ✅ CRITICAL: "1/2", "2/2" etc.
-            lab_session_id: entry.lab_session_id, // ✅ CRITICAL: Session grouping
+            lab_part: entry.lab_part, //CRITICAL: "1/2", "2/2" etc.
+            lab_session_id: entry.lab_session_id, //CRITICAL: Session grouping
           });
         });
       });

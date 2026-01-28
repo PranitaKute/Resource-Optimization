@@ -18,7 +18,7 @@ import userRouter from "./routes/userRoutes.js";
 import timetableRoutes from "./routes/timetableRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
 import subjectRoutes from "./routes/subjectRoutes.js";
-import superadminRoutes from "./routes/superAdminRoutes.js";
+import superadminRoutes from "./routes/superadminRoutes.js";
 
 const app = express();
 app.set("trust proxy", 1);

@@ -1,4 +1,3 @@
-
 import subjectModel from "../models/subjectModel.js";
 
 export const addSubject = async (req, res) => {
@@ -63,7 +62,7 @@ export const addSubject = async (req, res) => {
       });
     }
     
-    console.error("❌ Subject creation error:", error);
+    console.error(" Subject creation error:", error);
     res.status(500).json({ 
       success: false, 
       message: error.message || "Failed to add subject" 

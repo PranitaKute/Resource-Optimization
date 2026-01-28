@@ -36,7 +36,7 @@ export default function StudentTimetable() {
   const fetchTimetables = async () => {
     try {
       // FIXED: Use axiosInstance which includes withCredentials
-      const res = await axiosInstance.get("/api/timetable/all");
+      const res = await axiosInstance.get("/api/timetable/individual");
 
       console.log("Student timetable fetch response:", res.data);
 

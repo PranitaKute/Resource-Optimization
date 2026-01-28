@@ -1,7 +1,7 @@
 // controllers/roomController.js - FIXED with better error handling
 import roomModel from "../models/roomModel.js";
 
-// ✅ FIXED: Add room with proper department isolation and better error messages
+//FIXED: Add room with proper department isolation and better error messages
 export const addRoom = async (req, res) => {
   try {
     const { name, type, capacity, labCategory, primaryYear } = req.body;
@@ -24,7 +24,7 @@ export const addRoom = async (req, res) => {
     // Get department from authenticated admin
     const department = req.adminDepartment;
 
-    // ✅ FIXED: Check if room already exists in this department ONLY
+    //FIXED: Check if room already exists in this department ONLY
     const exists = await roomModel.findOne({ 
       name: name.toUpperCase(), 
       department 
@@ -50,7 +50,7 @@ export const addRoom = async (req, res) => {
 
     await newRoom.save();
 
-    console.log(`✅ Room created: ${name} for ${department}`);
+    console.log(` Room created: ${name} for ${department}`);
 
     res.status(201).json({
       success: true,
@@ -58,7 +58,7 @@ export const addRoom = async (req, res) => {
       room: newRoom
     });
   } catch (error) {
-    // ✅ FIXED: Better error handling for duplicate key errors
+    //FIXED: Better error handling for duplicate key errors
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
@@ -66,7 +66,7 @@ export const addRoom = async (req, res) => {
       });
     }
 
-    console.error("❌ Room creation error:", error);
+    console.error(" Room creation error:", error);
     res.status(500).json({
       success: false,
       message: error.message || "Failed to add room"
@@ -74,7 +74,7 @@ export const addRoom = async (req, res) => {
   }
 };
 
-// ✅ Get all rooms (filtered by department)
+//Get all rooms (filtered by department)
 export const getRooms = async (req, res) => {
   try {
     const filter = {};
@@ -99,7 +99,7 @@ export const getRooms = async (req, res) => {
   }
 };
 
-// ✅ Get rooms by year (department-aware)
+//Get rooms by year (department-aware)
 export const getRoomsByYear = async (req, res) => {
   try {
     const { year } = req.query;
@@ -133,7 +133,7 @@ export const getRoomsByYear = async (req, res) => {
   }
 };
 
-// ✅ Delete room (with department check)
+//Delete room (with department check)
 export const deleteRoom = async (req, res) => {
   try {
     const { id } = req.params;
@@ -171,7 +171,7 @@ export const deleteRoom = async (req, res) => {
   }
 };
 
-// ✅ Update room (with department check)
+//Update room (with department check)
 export const updateRoom = async (req, res) => {
   try {
     const { id } = req.params;

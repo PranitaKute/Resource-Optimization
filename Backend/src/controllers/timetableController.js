@@ -65,6 +65,33 @@ export const saveTimetable = async (req, res) => {
     });
   }
 };
+export const getAllIndividualTimetables = async (req, res) => {
+  try {
+    const { department, year, division } = req.query;
+
+    const filter = {};
+    if (department) filter.department = department;
+    if (year) filter.year = year;
+    if (division) filter.division = division;
+
+    const timetables = await timetableModel
+      .find(filter)
+      .sort({ year: 1, division: 1 })
+      .lean();
+
+    res.json({
+      success: true,
+      timetables,
+      count: timetables.length
+    });
+  } catch (error) {
+    console.error("Get timetables error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch timetables"
+    });
+  }
+};
 
 export const getAllTimetables = async (req, res) => {
   try {

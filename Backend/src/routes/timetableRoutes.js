@@ -4,7 +4,8 @@ import userAuth from "../middleware/userAuth.js";
 import { 
   saveTimetable, 
   getAllTimetables, 
-  deleteTimetable 
+  deleteTimetable, 
+  getAllIndividualTimetables
 } from "../controllers/timetableController.js";
 
 const timetableRouter = express.Router();
@@ -18,6 +19,7 @@ const combinedAuth = (req, res, next) => {
 };
 
 timetableRouter.post("/save", adminAuth, saveTimetable);
+timetableRouter.get("/individual",  getAllIndividualTimetables); // New route for individual timetables
 timetableRouter.get("/all", combinedAuth, getAllTimetables); // Changed
 timetableRouter.delete("/delete/:id", adminAuth, deleteTimetable);
 

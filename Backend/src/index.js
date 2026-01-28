@@ -1,11 +1,9 @@
-// index.js - FIXED SESSION CONFIGURATION WITH DEBUGGING
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 
-// DB Connection
 import connectDB from "./config/mongodb.js";
 
 //Import admin middleware
@@ -31,7 +29,7 @@ const isProduction = process.env.NODE_ENV === "production";
 // Connect Database
 connectDB();
 
-// ✅ FIXED: Environment-aware CORS configuration
+// FIXED: Environment-aware CORS configuration
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = isProduction 
@@ -44,7 +42,7 @@ const corsOptions = {
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      console.log(`❌ CORS blocked origin: ${origin}`);
+      console.log(` CORS blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -56,13 +54,10 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Handle preflight requests
-// app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
-// ✅ FIXED: Environment-aware session configuration
 const sessionConfig = {
   name: "sid",
   secret: process.env.SESSION_SECRET || "your-secret-key-change-in-production",
@@ -83,13 +78,13 @@ if (isProduction) {
 
 app.use(session(sessionConfig));
 
-// ✅ Session debugging middleware
+//  Session debugging middleware
 app.use((req, res, next) => {
   if (!isProduction && req.path.includes('/api/')) {
-    console.log(`📍 ${req.method} ${req.path}`);
-    console.log(`   Session ID: ${req.sessionID}`);
-    console.log(`   Is Admin: ${req.session?.isAdmin || false}`);
-    console.log(`   Admin ID: ${req.session?.adminId || 'none'}`);
+    console.log(`${req.method} ${req.path}`);
+    console.log(`Session ID: ${req.sessionID}`);
+    console.log(`Is Admin: ${req.session?.isAdmin || false}`);
+    console.log(`Admin ID: ${req.session?.adminId || 'none'}`);
   }
   next();
 });
@@ -99,7 +94,7 @@ app.get("/", (req, res) => {
   res.send("Server is up and running!");
 });
 
-// ✅ ENHANCED: Session debug endpoint (available in dev and prod for troubleshooting)
+//ENHANCED: Session debug endpoint (available in dev and prod for troubleshooting)
 app.get("/debug/session", (req, res) => {
   res.json({
     environment: isProduction ? "production" : "development",
@@ -115,7 +110,7 @@ app.get("/debug/session", (req, res) => {
   });
 });
 
-// ✅ ADDED: Health check endpoint for admin auth
+//ADDED: Health check endpoint for admin auth
 app.get("/api/admin/health", adminAuth, (req, res) => {
   res.json({
     success: true,
@@ -138,8 +133,6 @@ app.use("/api/superadmin", superadminRoutes);
 //Admin Routes (some protected, some public like login)
 app.use("/api/admin", adminRoutes);
 
-//PROTECTED ROUTES - All require adminAuth middleware
-// These routes are already protected in their individual route files
 app.use("/api/scheduler", schedulerRoutes);
 app.use("/api/timetable", timetableRoutes);
 app.use("/api/teacher", teacherRoutes);
@@ -148,7 +141,7 @@ app.use("/api/subjects", subjectRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('❌ Error:', err);
+  console.error(' Error:', err);
   res.status(500).json({
     success: false,
     message: err.message || 'Internal server error'
@@ -157,11 +150,11 @@ app.use((err, req, res, next) => {
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`✅ Backend running on port ${PORT}`);
-  console.log(`📦 Environment: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
-  console.log(`🔒 Session secure: ${isProduction ? 'true (HTTPS)' : 'false (HTTP)'}`);
-  console.log(`🌐 CORS enabled for: ${isProduction ? 'Production URL' : 'Localhost'}`);
-  console.log(`🎯 Multi-department admin system enabled`);
-  console.log(`🍪 Cookie SameSite: ${sessionConfig.cookie.sameSite}`);
-  console.log(`🔐 Cookie Secure: ${sessionConfig.cookie.secure}`);
+  console.log(`Backend running on port ${PORT}`);
+  console.log(`Environment: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+  console.log(`Session secure: ${isProduction ? 'true (HTTPS)' : 'false (HTTP)'}`);
+  console.log(`CORS enabled for: ${isProduction ? 'Production URL' : 'Localhost'}`);
+  console.log(`Multi-department admin system enabled`);
+  console.log(`Cookie SameSite: ${sessionConfig.cookie.sameSite}`);
+  console.log(`Cookie Secure: ${sessionConfig.cookie.secure}`);
 });

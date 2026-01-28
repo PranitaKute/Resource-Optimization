@@ -1,6 +1,6 @@
 // src/pages/IndividualTeacherTimetable.jsx - FIXED: Uses axiosInstance for auth
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../utils/axiosInstance"; // ✅ FIXED: Use axiosInstance
+import axiosInstance from "../utils/axiosInstance"; //FIXED: Use axiosInstance
 import { useAppContext } from "../context/AppContext";
 import { Navbar } from "../components/Navbar";
 import {
@@ -18,8 +18,8 @@ export default function IndividualTeacherTimetable() {
   useEffect(() => {
     const fetchAndBuild = async () => {
       try {
-        // ✅ FIXED: Use axiosInstance which includes withCredentials
-        const res = await axiosInstance.get("/api/timetable/all");
+        //FIXED: Use axiosInstance which includes withCredentials
+        const res = await axiosInstance.get("/api/timetable/individual");
 
         console.log("Individual teacher fetch response:", res.data);
 
@@ -34,7 +34,7 @@ export default function IndividualTeacherTimetable() {
           setTeacherTT(teacherMap);
           
           if (teacherMap) {
-            console.log(`✅ Built timetable for ${userData.name}`);
+            console.log(` Built timetable for ${userData.name}`);
           } else {
             console.log(`⚠️ No timetable found for ${userData.name}`);
           }

@@ -62,7 +62,7 @@ async function createSuperadmin() {
     console.log("\n🎯 Login Credentials:");
     console.log(`   Email: ${SUPERADMIN_EMAIL}`);
     console.log(`   Password: ${SUPERADMIN_PASSWORD}`);
-    console.log("\n📍 Login URL: http://localhost:8080/admin/login");
+    console.log("\n Login URL: http://localhost:8080/admin/login");
     console.log("\n⚠️  IMPORTANT: Change the password after first login!");
 
   } catch (error) {

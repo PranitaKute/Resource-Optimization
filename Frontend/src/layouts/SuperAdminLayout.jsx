@@ -1,6 +1,7 @@
 import { NavLink, Outlet, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAppContext } from "../context/AppContext";
+import useIdleLogout from "../hooks/useIdleLogout";
 import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
 

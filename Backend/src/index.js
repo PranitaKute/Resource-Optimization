@@ -71,6 +71,10 @@ const sessionConfig = {
   }
 };
 
+// Add domain for production
+// if (isProduction) {
+//   sessionConfig.cookie.domain = ".vercel.app";
+// }
 
 app.use(session(sessionConfig));
 

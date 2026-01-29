@@ -4,8 +4,8 @@ export default function AllocatePanel({ yearData, rooms, setRooms, allocations, 
   const [room, setRoom] = useState({ name: "", type: "Classroom", capacity: 30 });
 
   function addRoom() {
-    if (!room.name.trim()) return alert("Room name required");
-    if (rooms.some((r) => r.name === room.name.trim())) return alert("Room with this name already exists");
+    if (!room.name.trim()) return toast.error("Room name required");
+    if (rooms.some((r) => r.name === room.name.trim())) return toast.warning("Room with this name already exists");
     setRooms([...rooms, { ...room, name: room.name.trim() }]);
     setRoom({ name: "", type: "Classroom", capacity: 30 });
   }

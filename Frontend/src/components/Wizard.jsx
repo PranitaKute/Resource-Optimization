@@ -4,6 +4,7 @@
   import RoomAllocation from "./RoomAllocation";
   import SchedulerResult from "./SchedulerResult";
   import axiosInstance from "../utils/axiosInstance";
+import { toast } from "react-toastify";
 
   function calculatePeriodsPerDay(timeConfig) {
     if (!timeConfig) return 6;
@@ -191,17 +192,17 @@
         });
         
         if (validationErrors.length > 0) {
-          alert("⚠️ Configuration Errors:\n\n" + validationErrors.join("\n"));
+          toast.error("⚠️ Configuration Errors:\n\n" + validationErrors.join("\n"));
           return;
         }
         
         if (!teachers || teachers.length === 0) {
-          alert("⚠️ No teachers defined. Please add at least one teacher.");
+          toast.error("⚠️ No teachers defined. Please add at least one teacher.");
           return;
         }
         
         if (!rooms || rooms.length === 0) {
-          alert("⚠️ No rooms defined. Please add at least one room.");
+          toast.error("⚠️ No rooms defined. Please add at least one room.");
           return;
         }
 
@@ -214,7 +215,7 @@
           roomMappings: roomMappings
         };
 
-        console.log("📤 Sending payload with room mappings:", payload);
+        console.log("Sending payload with room mappings:", payload);
 
         const res = await axiosInstance.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/scheduler/generate`,
@@ -224,7 +225,7 @@
         console.log("SOLVER RESPONSE:", res.data);
         const timetable = res.data.timetable || res.data;
         if (!timetable) {
-          alert("Invalid scheduler response");
+          toast.error("Invalid scheduler response");
           return;
         }
 
@@ -232,14 +233,14 @@
         setStep(4);
       } catch (error) {
         console.error("Generation error:", error);
-        alert("Error generating timetable: " + (error.response?.data?.message || error.message));
+        toast.error("Error generating timetable: " + (error.response?.data?.message || error.message));
       }
     };
 
     const handleSave = async (outerKey, table, isTeacher = false) => {
       let payload = {};
       if (isTeacher) {
-        alert("Teacher timetables are derived from class timetables and cannot be saved separately.");
+        toast.warning("Teacher timetables are derived from class timetables and cannot be saved separately.");
         return { success: true, message: "Teacher timetables are derived dynamically" };
       } else {
         const keyStr = String(outerKey);
@@ -268,7 +269,7 @@
 
         if (!year || year.length === 0) {
           console.error("Could not parse year from outerKey:", outerKey);
-          alert("Failed to parse timetable information. Please try again.");
+          toast.error("Failed to parse timetable information. Please try again.");
           return { success: false, message: "Invalid timetable key format" };
         }
 
@@ -286,18 +287,18 @@
         );
 
         if (res?.data?.success) {
-          alert("Saved: " + (res.data.message || "OK"));
+          toast.success("Saved: " + (res.data.message || "OK"));
           return res.data;
         } else {
           const errorMsg = res.data?.message || JSON.stringify(res.data || "no response");
-          alert("Save failed: " + errorMsg);
+          toast.error("Save failed: " + errorMsg);
           console.error("Save failed response:", res.data);
           return res.data;
         }
       } catch (err) {
         console.error("Save error", err);
         const errorMessage = err.response?.data?.message || err.message || "Unknown error";
-        alert("Error saving timetable: " + errorMessage);
+        toast.error("Error saving timetable: " + errorMessage);
         throw err;
       }
     };

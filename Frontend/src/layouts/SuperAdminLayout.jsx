@@ -33,8 +33,6 @@ export default function SuperAdminLayout() {
   }, [isMobile, isSidebarOpen]);
 
   const handleLogout = async () => {
-   
-    
     try {
       await adminLogout();
       toast.success("Logged out successfully");
@@ -42,6 +40,8 @@ export default function SuperAdminLayout() {
       toast.error("Logout failed");
     }
   };
+
+  useIdleLogout(handleLogout);
 
   const menuLinks = [
     {

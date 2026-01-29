@@ -140,17 +140,17 @@ export default function EditTimetable() {
         payload
       );
       if (res?.data?.success) {
-        alert("Timetable saved successfully: " + (res.data.message || ""));
+        toast.success("Timetable saved successfully: " + (res.data.message || ""));
         navigate(-1);
       } else {
         const errorMsg = res.data?.message || JSON.stringify(res.data || "no response");
-        alert("Save failed: " + errorMsg);
+        toast.error("Save failed: " + errorMsg);
         console.error("Save failed response:", res.data);
       }
     } catch (err) {
       console.error("Save error", err);
       const errorMessage = err.response?.data?.message || err.message || "Unknown error";
-      alert("Error saving timetable: " + errorMessage);
+      toast.error("Error saving timetable: " + errorMessage);
     }
   };
 

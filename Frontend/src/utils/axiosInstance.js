@@ -14,7 +14,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Log requests in development
     if (import.meta.env.DEV) {
-      console.log(`📤 ${config.method?.toUpperCase()} ${config.url}`);
+      console.log(`${config.method?.toUpperCase()} ${config.url}`);
     }
     return config;
   },

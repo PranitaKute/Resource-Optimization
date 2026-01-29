@@ -35,6 +35,131 @@ function getSuggestion(item, recommendations) {
   return "Consider adjusting resource allocation or periods per day.";
 }
 
+// ===================================================================
+// REUSABLE TIMETABLE DISPLAY COMPONENT - Eliminates code duplication
+// ===================================================================
+function TimetableDisplay({ 
+  title, 
+  timetable, 
+  canSave, 
+  handleEdit, 
+  handleSave, 
+  isTeacher = false,
+  showYearDivision = false 
+}) {
+  const allTimeSlots = new Set();
+  ORDERED_DAYS.forEach((day) => {
+    if (timetable[day]) {
+      Object.keys(timetable[day]).forEach((slot) => allTimeSlots.add(slot));
+    }
+  });
+  const sortedTimeSlots = Array.from(allTimeSlots).sort();
+
+  return (
+    <div className="mb-10 last:mb-0">
+      {/* Header with buttons */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 pb-3 border-b border-gray-200 gap-2 sm:gap-4">
+        <h4 className="text-lg sm:text-xl font-bold text-gray-800 truncate flex-1 min-w-0">{title}</h4>
+
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 w-full sm:w-auto">
+          <button
+            onClick={() => handleEdit(title, timetable, isTeacher)}
+            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
+          >
+            Edit
+          </button>
+
+          <button
+            onClick={() => handleSave(title, timetable, isTeacher)}
+            disabled={!canSave}
+            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap ${
+              !canSave
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+            title={!canSave ? "Resolve conflicts to enable saving" : ""}
+          >
+            {!canSave ? "🔒 Save" : "Save"}
+          </button>
+
+          <button
+            onClick={() => downloadJSON(timetable, title)}
+            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
+          >
+            JSON
+          </button>
+
+          <button
+            onClick={() => downloadTimetableCSV(timetable, title, ORDERED_DAYS)}
+            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
+          >
+            CSV
+          </button>
+        </div>
+      </div>
+
+      {/* Timetable */}
+      <div className="overflow-x-auto rounded-lg sm:rounded-xl border border-gray-200 -mx-1 sm:mx-0">
+        <table className="min-w-full border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr className="bg-blue-600 text-white">
+              {/* Mobile-friendly time slot header */}
+              <th className="border border-gray-300 p-1.5 sm:p-2 md:p-3 text-center text-[10px] sm:text-xs md:text-sm sticky left-0 bg-blue-600 z-20 w-16 sm:w-24 md:w-28">
+                <div className="flex flex-col">
+                  <span className="hidden sm:inline">Time Slot</span>
+                  <span className="sm:hidden">Time</span>
+                </div>
+              </th>
+              {ORDERED_DAYS.map((day) => (
+                timetable[day] && (
+                  <th
+                    key={day}
+                    className="border border-gray-300 p-2 sm:p-3 font-bold text-xs sm:text-sm whitespace-nowrap min-w-[140px] sm:min-w-[160px]"
+                  >
+                    {day}
+                  </th>
+                )
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {sortedTimeSlots.map((timeSlot) => (
+              <tr key={timeSlot} className="hover:bg-blue-50/30 transition-colors">
+                {/* Mobile-friendly time slot cell with split display */}
+                <td className="border border-gray-300 p-1 sm:p-2 md:p-3 font-black bg-blue-50 text-blue-700 text-center text-[9px] sm:text-xs md:text-sm sticky left-0 bg-blue-50 z-10">
+                  <div className="flex flex-col leading-tight">
+                    {formatTimeSlot(timeSlot).split(' - ').map((time, idx) => (
+                      <span key={idx} className="whitespace-nowrap">
+                        {time}
+                      </span>
+                    ))}
+                  </div>
+                </td>
+
+                {ORDERED_DAYS.map((day) => (
+                  timetable[day] && (
+                    <td
+                      key={day}
+                      className="border border-gray-300 p-2 sm:p-3 text-xs sm:text-sm align-top min-h-[90px] sm:min-h-[110px]"
+                    >
+                      {renderTimetableCell(timetable[day][timeSlot], {
+                        showYearDivision: showYearDivision,
+                        filterByBatch: null,
+                        highlightBatch: false
+                      })}
+                    </td>
+                  )
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function SchedulerResult({ result, onBack, onSave }) {
   const navigate = useNavigate();
 
@@ -98,7 +223,7 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
       return { success: false, message: "Invalid timetable key format" };
     }
 
-    console.log("📤 Sending payload - Year:", year, "Division:", division);
+    console.log("Sending payload - Year:", year, "Division:", division);
 
     payload = {
       year,
@@ -110,7 +235,7 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
   try {
     const res = await axiosInstance.post(`${import.meta.env.VITE_BACKEND_URL}/api/timetable/save`, payload);
     
-    console.log("📥 Server response:", res.data);
+    console.log("Server response:", res.data);
     
     if (res?.data?.success) {
       toast.success("Saved successfully: " + (res.data.message || ""));
@@ -120,11 +245,11 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
         "Save failed: " + (res.data?.message || "Please try again or check console for details."),
         { autoClose: 5000 }
       );
-      console.error("❌ Save failed response:", res.data);
+      console.error(" Save failed response:", res.data);
       return res.data;
     }
   } catch (err) {
-    console.error("❌ Save error:", err);
+    console.error(" Save error:", err);
     console.error("Error details:", err.response?.data);
     const errorMessage = err.response?.data?.message || err.message || "Unknown error";
     toast.error("Error saving timetable: " + errorMessage, { autoClose: 5000 });
@@ -156,7 +281,7 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
           const result = await maybePromise;
           
           if (result && result.success) {
-            toast.success("Timetable saved successfully");
+            console.log("Timetable saved successfully");
           }
         }
       } catch (e) {
@@ -188,8 +313,8 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
             {criticalIssues.length > 0 
               ? "🚨 Critical issues detected - cannot generate timetable"
               : hasIssues 
-                ? "⚠️ Review issues before finalizing" 
-                : "✅ Timetable generated successfully"}
+                ? "Review issues before finalizing" 
+                : "Timetable generated successfully"}
           </p>
         </div>
 
@@ -319,19 +444,21 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
                       <th className="py-2 sm:py-3 px-2 sm:px-4 text-left whitespace-nowrap">Day / Time</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 text-left whitespace-nowrap">Already Occupied By</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 text-left whitespace-nowrap">Subject</th>
-                      <th className="py-2 sm:py-3 px-2 sm:px-4 text-left whitespace-nowrap">Teacher</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-orange-100">
+                  <tbody className="divide-y divide-gray-200">
                     {roomConflicts.map((c, i) => (
-                      <tr key={i} className="hover:bg-orange-50 transition-colors">
-                        <td className="py-2 sm:py-3 px-2 sm:px-4 font-bold text-gray-800 whitespace-nowrap">{c.room}</td>
-                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-gray-700 whitespace-nowrap">
-                          {c.day} - {formatTimeSlot(c.time_slot)}
+                      <tr key={i} className="hover:bg-orange-50">
+                        <td className="py-2 sm:py-3 px-2 sm:px-4 font-bold text-gray-800">{c.room}</td>
+                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-gray-700">
+                          <div className="font-medium">{c.day}</div>
+                          <div className="text-xs text-gray-500">{c.time_slot ? formatTimeSlot(c.time_slot) : c.time_slot}</div>
                         </td>
-                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-orange-600 font-medium whitespace-nowrap">{c.assigned_to}</td>
-                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-gray-600 break-words">{c.subject}</td>
-                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-gray-600 whitespace-nowrap">{c.teacher}</td>
+                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-gray-700">{c.existing_year} - Div {c.existing_division}</td>
+                        <td className="py-2 sm:py-3 px-2 sm:px-4">
+                          <div className="font-medium text-gray-800">{c.new_subject}</div>
+                          <div className="text-xs text-gray-500">{c.new_year} - Div {c.new_division}</div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -343,57 +470,70 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
 
         {/* TEACHER CONFLICTS */}
         {conflicts.length > 0 && (
-          <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold text-red-800 flex items-center gap-3 mb-4">
-              <span className="text-3xl">👨‍🏫</span>
-              Teacher Conflicts Detected ({conflicts.length})
+          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-yellow-800 flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <span className="text-2xl sm:text-3xl">⚠️</span>
+              <span>Teacher Conflicts Detected ({conflicts.length})</span>
             </h2>
-            <p className="text-red-700 mb-4 font-medium">
-              🚫 The following teachers are already assigned to other classes at these times.
+            <p className="text-sm sm:text-base text-yellow-700 mb-3 sm:mb-4 font-medium">
+              🚫 The following teachers are assigned to multiple classes at the same time. Resolve conflicts before saving.
             </p>
-            <div className="bg-white rounded-xl overflow-hidden shadow-md border border-red-200">
-              <table className="w-full text-sm">
-                <thead className="bg-red-100 text-red-800 font-bold">
-                  <tr>
-                    <th className="py-3 px-4 text-left">Teacher</th>
-                    <th className="py-3 px-4 text-left">Day / Time</th>
-                    <th className="py-3 px-4 text-left">Already Teaching</th>
-                    <th className="py-3 px-4 text-left">Subject</th>
-                    <th className="py-3 px-4 text-left">Room</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-red-100">
-                  {conflicts.map((c, i) => (
-                    <tr key={i} className="hover:bg-red-50 transition-colors">
-                      <td className="py-3 px-4 font-bold text-gray-800">{c.teacher}</td>
-                      <td className="py-3 px-4 text-gray-700">
-                        {c.day} - {c.time_slot}
-                      </td>
-                      <td className="py-3 px-4 text-red-600 font-medium">{c.assigned_to}</td>
-                      <td className="py-3 px-4 text-gray-600">{c.subject}</td>
-                      <td className="py-3 px-4 text-gray-600">{c.room}</td>
+            <div className="bg-white rounded-lg sm:rounded-xl overflow-hidden shadow-md border border-yellow-200">
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-xs sm:text-sm">
+                  <thead className="bg-yellow-100 text-yellow-800 font-bold">
+                    <tr>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 text-left whitespace-nowrap">Teacher</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 text-left whitespace-nowrap">Day / Time</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 text-left whitespace-nowrap">Classes</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 text-left whitespace-nowrap">Subjects</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {conflicts.map((c, i) => (
+                      <tr key={i} className="hover:bg-yellow-50">
+                        <td className="py-2 sm:py-3 px-2 sm:px-4 font-bold text-gray-800">{c.teacher}</td>
+                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-gray-700">
+                          <div className="font-medium">{c.day}</div>
+                          <div className="text-xs text-gray-500">{c.time_slot ? formatTimeSlot(c.time_slot) : c.time_slot}</div>
+                        </td>
+                        <td className="py-2 sm:py-3 px-2 sm:px-4">
+                          {c.classes.map((cls, idx) => (
+                            <div key={idx} className="text-gray-700">
+                              {cls.year} - Div {cls.division}
+                            </div>
+                          ))}
+                        </td>
+                        <td className="py-2 sm:py-3 px-2 sm:px-4">
+                          {c.classes.map((cls, idx) => (
+                            <div key={idx} className="text-gray-700 font-medium">
+                              {cls.subject}
+                            </div>
+                          ))}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
 
-        {/* UNALLOCATED SESSIONS - SINGLE DISPLAY */}
+        {/* UNALLOCATED SESSIONS */}
         {unallocated.length > 0 && (
           <div className="bg-amber-50 border-2 border-amber-300 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-800 flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <span className="text-2xl sm:text-3xl">⚠️</span>
-              <span>Incomplete Schedule ({unallocated.length} Session{unallocated.length > 1 ? 's' : ''} Missing)</span>
+              <span className="text-2xl sm:text-3xl">📋</span>
+              <span>Unallocated Sessions ({unallocated.length})</span>
             </h2>
-            <p className="text-sm sm:text-base text-amber-700 mb-3 sm:mb-4">
-              The following sessions could not be allocated. Review the recommendations below and adjust your configuration.
+            <p className="text-sm sm:text-base text-amber-700 mb-3 sm:mb-4 font-medium">
+              ℹ️ These sessions could not be scheduled due to constraints:
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <div className="space-y-3 sm:space-y-4">
               {unallocated.map((item, i) => (
-                <div key={i} className="bg-white p-3 sm:p-4 md:p-5 rounded-lg sm:rounded-xl shadow-md border border-amber-200">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-start mb-3 gap-2 sm:gap-3">
+                <div key={i} className="bg-white p-3 sm:p-4 md:p-5 rounded-lg sm:rounded-xl shadow-md border-l-4 border-amber-500">
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-base sm:text-lg text-gray-800 break-words">{item.subject}</div>
                       <div className="text-xs sm:text-sm text-gray-600 mt-1 flex flex-wrap gap-1 sm:gap-2">
@@ -430,7 +570,7 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
           </div>
         )}
 
-        {/* CLASS TIMETABLES */}
+        {/* CLASS TIMETABLES - Using reusable component */}
         {Object.keys(classTT).length > 0 && (
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 border border-gray-200">
             <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-5 md:mb-6 text-gray-800 border-b pb-2 sm:pb-3">Class Timetables</h3>
@@ -440,110 +580,24 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
                 const tt = classTT[year][division];
                 const outerKey = `${year} Div ${division}`;
 
-                const allTimeSlots = new Set();
-                ORDERED_DAYS.forEach((day) => {
-                  if (tt[day]) {
-                    Object.keys(tt[day]).forEach((slot) => allTimeSlots.add(slot));
-                  }
-                });
-                const sortedTimeSlots = Array.from(allTimeSlots).sort();
-
                 return (
-                  <div key={outerKey} className="mb-10 last:mb-0">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 pb-3 border-b border-gray-200 gap-2 sm:gap-4">
-                      <h4 className="text-lg sm:text-xl font-bold text-gray-800 truncate flex-1 min-w-0">{outerKey}</h4>
-
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2 w-full sm:w-auto">
-                        <button
-                          onClick={() => handleEdit(outerKey, tt, false)}
-                          className="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          onClick={() => handleSave(outerKey, tt, false)}
-                          disabled={!canSave}
-                          className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap ${
-                            !canSave
-                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                              : 'bg-green-600 hover:bg-green-700 text-white'
-                          }`}
-                          title={!canSave ? "Resolve conflicts to enable saving" : ""}
-                        >
-                          {!canSave ? "🔒 Save" : "Save"}
-                        </button>
-
-                        <button
-                          onClick={() => downloadJSON(tt, outerKey)}
-                          className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
-                        >
-                          JSON
-                        </button>
-
-                        <button
-                          onClick={() => downloadTimetableCSV(tt, outerKey, ORDERED_DAYS)}
-                          className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
-                        >
-                          CSV
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="overflow-x-auto rounded-lg sm:rounded-xl border border-gray-200 -mx-1 sm:mx-0">
-                      <table className="min-w-full border-collapse text-xs sm:text-sm">
-                        <thead>
-                          <tr className="bg-blue-600 text-white">
-                            <th className="border border-gray-300 p-2 sm:p-3 font-bold text-xs sm:text-sm sticky left-0 bg-blue-600 z-10 whitespace-nowrap">
-                              Time Slot / Day
-                            </th>
-                            {ORDERED_DAYS.map((day) => (
-                              tt[day] && (
-                                <th
-                                  key={day}
-                                  className="border border-gray-300 p-2 sm:p-3 font-bold text-xs sm:text-sm whitespace-nowrap min-w-[140px] sm:min-w-[160px]"
-                                >
-                                  {day}
-                                </th>
-                              )
-                            ))}
-                          </tr>
-                        </thead>
-
-                        <tbody>
-                          {sortedTimeSlots.map((timeSlot) => (
-                            <tr key={timeSlot} className="hover:bg-blue-50/30 transition-colors">
-                              <td className="border border-gray-300 p-2 sm:p-3 bg-blue-50 font-bold text-blue-700 text-center text-xs sm:text-sm sticky left-0 bg-blue-50 z-10 whitespace-nowrap">
-                                {formatTimeSlot(timeSlot)}
-                              </td>
-
-                              {ORDERED_DAYS.map((day) => (
-                                tt[day] && (
-                                  <td
-                                    key={day}
-                                    className="border border-gray-300 p-2 sm:p-3 text-xs sm:text-sm align-top min-h-[90px] sm:min-h-[110px]"
-                                  >
-                                    {renderTimetableCell(tt[day][timeSlot], {
-                                      showYearDivision: false,
-                                      filterByBatch: null,
-                                      highlightBatch: false
-                                    })}
-                                  </td>
-                                )
-                              ))}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                  <TimetableDisplay
+                    key={outerKey}
+                    title={outerKey}
+                    timetable={tt}
+                    canSave={canSave}
+                    handleEdit={handleEdit}
+                    handleSave={handleSave}
+                    isTeacher={false}
+                    showYearDivision={false}
+                  />
                 );
               })
             )}
           </div>
         )}
 
-        {/* TEACHER TIMETABLES */}
+        {/* TEACHER TIMETABLES - Using reusable component */}
         {Object.keys(teacherTT).length > 0 && (
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 border border-gray-200">
             <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-5 md:mb-6 text-gray-800 border-b pb-2 sm:pb-3">Teacher Timetables</h3>
@@ -551,103 +605,17 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
             {Object.keys(teacherTT).map((teacher) => {
               const tt = teacherTT[teacher];
 
-              const allTimeSlots = new Set();
-              ORDERED_DAYS.forEach((day) => {
-                if (tt[day]) {
-                  Object.keys(tt[day]).forEach((slot) => allTimeSlots.add(slot));
-                }
-              });
-              const sortedTimeSlots = Array.from(allTimeSlots).sort();
-
               return (
-                <div key={teacher} className="mb-10 last:mb-0">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 pb-3 border-b border-gray-200 gap-2 sm:gap-4">
-                    <h4 className="text-lg sm:text-xl font-bold text-gray-800 truncate flex-1 min-w-0">{teacher}</h4>
-
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2 w-full sm:w-auto">
-                      <button
-                        onClick={() => handleEdit(teacher, tt, true)}
-                        className="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        onClick={() => handleSave(teacher, tt, true)}
-                        disabled={!canSave}
-                        className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap ${
-                          !canSave
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-green-600 hover:bg-green-700 text-white'
-                        }`}
-                        title={!canSave ? "Resolve conflicts to enable saving" : ""}
-                      >
-                        {!canSave ? "🔒 Save" : "Save"}
-                      </button>
-
-                      <button
-                        onClick={() => downloadJSON(tt, teacher)}
-                        className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
-                      >
-                        JSON
-                      </button>
-
-                      <button
-                        onClick={() => downloadTimetableCSV(tt, teacher, ORDERED_DAYS)}
-                        className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
-                      >
-                        CSV
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="overflow-x-auto rounded-lg sm:rounded-xl border border-gray-200 -mx-1 sm:mx-0">
-                    <table className="min-w-full border-collapse text-xs sm:text-sm">
-                      <thead>
-                        <tr className="bg-blue-600 text-white">
-                          <th className="border border-gray-300 p-2 sm:p-3 font-bold text-xs sm:text-sm sticky left-0 bg-blue-600 z-10 whitespace-nowrap">
-                            Time Slot / Day
-                          </th>
-                          {ORDERED_DAYS.map((day) => (
-                            tt[day] && (
-                              <th
-                                key={day}
-                                className="border border-gray-300 p-2 sm:p-3 font-bold text-xs sm:text-sm whitespace-nowrap min-w-[140px] sm:min-w-[160px]"
-                              >
-                                {day}
-                              </th>
-                            )
-                          ))}
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {sortedTimeSlots.map((timeSlot) => (
-                          <tr key={timeSlot} className="hover:bg-blue-50/30 transition-colors">
-                            <td className="border border-gray-300 p-2 sm:p-3 bg-blue-50 font-bold text-blue-700 text-center text-xs sm:text-sm sticky left-0 bg-blue-50 z-10 whitespace-nowrap">
-                              {formatTimeSlot(timeSlot)}
-                            </td>
-
-                            {ORDERED_DAYS.map((day) => (
-                              tt[day] && (
-                                <td
-                                  key={day}
-                                  className="border border-gray-300 p-2 sm:p-3 text-xs sm:text-sm align-top min-h-[90px] sm:min-h-[110px]"
-                                >
-                                  {renderTimetableCell(tt[day][timeSlot], {
-                                    showYearDivision: true,
-                                    filterByBatch: null,
-                                    highlightBatch: false
-                                  })}
-                                </td>
-                              )
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                <TimetableDisplay
+                  key={teacher}
+                  title={teacher}
+                  timetable={tt}
+                  canSave={canSave}
+                  handleEdit={handleEdit}
+                  handleSave={handleSave}
+                  isTeacher={true}
+                  showYearDivision={true}
+                />
               );
             })}
           </div>

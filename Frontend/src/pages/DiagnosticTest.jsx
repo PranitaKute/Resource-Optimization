@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import axiosInstance from "../utils/axiosInstance";
+import { toast } from "react-toastify";
 
 export default function DiagnosticTest() {
   const { isAdmin, adminData } = useAppContext();
@@ -99,7 +100,7 @@ export default function DiagnosticTest() {
   const copyResults = () => {
     const text = JSON.stringify(results, null, 2);
     navigator.clipboard.writeText(text);
-    alert("Results copied to clipboard!");
+    toast.success("Results copied to clipboard!");
   };
 
   return (

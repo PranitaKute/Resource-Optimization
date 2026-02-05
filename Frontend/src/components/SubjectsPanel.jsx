@@ -77,7 +77,6 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
     <div>
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <span className="text-xl sm:text-2xl">📚</span>
           <h4 className="text-lg sm:text-xl font-bold text-gray-800 truncate">Subjects for {year}</h4>
         </div>
         <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap">
@@ -88,7 +87,6 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
       {/* Semester Selection */}
       <div className="bg-gradient-to-br from-blue-50/50 to-cyan-50/50 backdrop-blur-sm p-4 sm:p-5 md:p-6 rounded-lg sm:rounded-xl border border-blue-200/50 mb-4 sm:mb-6">
         <div className="flex items-center gap-2 mb-3 sm:mb-4">
-          <span className="text-base sm:text-lg">📅</span>
           <h5 className="text-sm sm:text-base font-semibold text-gray-700">Select Semester</h5>
         </div>
 
@@ -136,7 +134,6 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
       {!loading && yearData[year].subjects.length > 0 ? (
         <div className="space-y-2 sm:space-y-3">
           <h5 className="font-semibold text-sm sm:text-base text-gray-700 flex items-center gap-2">
-            <span>📋</span>
             Subjects for Semester {selectedSemester}
           </h5>
           {yearData[year].subjects.map((s, i) => (
@@ -167,18 +164,15 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
                     </div>
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1 text-xs sm:text-sm text-gray-600">
                       <span className="flex items-center gap-1">
-                        <span>⏰</span>
                         {s.hours} hrs/week
                       </span>
                       {s.type === "Lab" && s.labDuration && (
                         <span className="flex items-center gap-1 bg-purple-100 text-purple-700 px-1.5 sm:px-2 py-0.5 rounded font-semibold text-xs sm:text-sm">
-                          <span>🕐</span>
                           {s.labDuration}h continuous
                         </span>
                       )}
                       {s.type !== "Theory" && (
                         <span className="flex items-center gap-1">
-                          <span>👥</span>
                           {s.batches} batch{s.batches > 1 ? "es" : ""}
                         </span>
                       )}
@@ -195,7 +189,6 @@ export default function SubjectsPanel({ year, yearData, setYearData }) {
         </div>
       ) : !loading ? (
         <div className="text-center py-6 sm:py-8 bg-gray-50/50 rounded-lg sm:rounded-xl border-2 border-dashed border-gray-300 px-4">
-          <span className="text-3xl sm:text-4xl mb-2 block">📚</span>
           <p className="text-sm sm:text-base text-gray-500 font-medium">
             No subjects found for Semester {selectedSemester}
           </p>

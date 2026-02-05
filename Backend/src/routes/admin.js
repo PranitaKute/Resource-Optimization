@@ -16,7 +16,7 @@ router.post("/login", async (req, res) => {
   }
 
   try {
-    console.log("🔐 Admin login attempt:", email);
+    console.log("Admin login attempt:", email);
 
     // Find ONLY admin or superadmin
     const admin = await userModel.findOne({ 

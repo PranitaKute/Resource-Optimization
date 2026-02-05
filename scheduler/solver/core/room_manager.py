@@ -5,18 +5,18 @@
 def get_room_for_subject(subject_code, component_type, batch, room_mappings, rooms, year=None):
     """Get assigned room from wizard room mappings."""
     if not room_mappings:
-        print(f"⚠️ No room mappings provided for {subject_code}")
+        print(f" No room mappings provided for {subject_code}")
         return None
     
     mapping_key = f"{year}_{subject_code}_{component_type}"
     
-    print(f"🔍 Looking for mapping key: {mapping_key}")
-    print(f"📋 Available mapping keys: {list(room_mappings.keys())}")
+    print(f"Looking for mapping key: {mapping_key}")
+    print(f"Available mapping keys: {list(room_mappings.keys())}")
     
     mapping = room_mappings.get(mapping_key)
     
     if not mapping:
-        print(f"⚠️ No room mapping found for {mapping_key}")
+        print(f" No room mapping found for {mapping_key}")
         return None
     
     print(f" Found mapping: {mapping}")
@@ -54,7 +54,7 @@ def get_room_for_subject(subject_code, component_type, batch, room_mappings, roo
                         print(f" Found assigned room for {subject_code} batch {batch}: {room.get('name')}")
                         return room
     
-    print(f"⚠️ Room not found in rooms list for {subject_code} batch {batch}")
+    print(f" Room not found in rooms list for {subject_code} batch {batch}")
     return None
 
 
@@ -116,7 +116,7 @@ def get_compatible_rooms_for_subject(rooms, subject_code, room_type, year=None, 
     result = [item["room"] for item in compatible]
     
     if len(result) == 0:
-        print(f"⚠️ No compatible rooms found for {room_type} - {subject_code}")
+        print(f" No compatible rooms found for {room_type} - {subject_code}")
     else:
         print(f" Found {len(result)} compatible rooms for {room_type} - {subject_code}")
     

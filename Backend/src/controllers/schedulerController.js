@@ -18,7 +18,7 @@ export const generateTimetable = async (req, res) => {
       });
     }
 
-    console.log(`🎯 Generating timetable for department: ${department}`);
+    console.log(`Generating timetable for department: ${department}`);
 
     // STEP 1: Fetch department-filtered resources
     
@@ -34,12 +34,12 @@ export const generateTimetable = async (req, res) => {
       });
     }
 
-    console.log(`🏛️ Found ${departmentRooms.length} rooms for ${department}`);
+    console.log(`Found ${departmentRooms.length} rooms for ${department}`);
 
     let departmentTeachers = wizardTeachers || [];
 
     if (!departmentTeachers || departmentTeachers.length === 0) {
-      console.log("⚠️ No teachers in wizard payload, fetching from database...");
+      console.log("No teachers in wizard payload, fetching from database...");
       departmentTeachers = await userModel.find({
         role: "teacher",
         department
@@ -55,7 +55,7 @@ export const generateTimetable = async (req, res) => {
       });
     }
 
-    console.log(`👥 Found ${departmentTeachers.length} teachers for ${department}`);
+    console.log(` Found ${departmentTeachers.length} teachers for ${department}`);
     
     // Log teacher-subject assignments for debugging
     departmentTeachers.forEach(t => {
@@ -85,7 +85,7 @@ export const generateTimetable = async (req, res) => {
         });
       }
 
-      console.log(`📚 Year ${yearName}: Found ${fullSubjects.length} subjects`);
+      console.log(`Year ${yearName}: Found ${fullSubjects.length} subjects`);
 
       // STEP 3: Flatten components into individual entries
       const mappedSubjects = fullSubjects.flatMap(subject => {

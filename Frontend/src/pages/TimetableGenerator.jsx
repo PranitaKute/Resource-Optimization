@@ -142,9 +142,6 @@ export default function TimetableGenerator() {
                 <span className="text-lg sm:text-xl"></span>
                 Import Existing Configuration
               </h3>
-              <p className="text-xs sm:text-sm text-gray-600">
-                Load previously exported configuration file
-              </p>
             </div>
             <label className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg sm:rounded-xl font-semibold cursor-pointer transition-all shadow-md hover:shadow-lg text-sm sm:text-base whitespace-nowrap">
               Choose File
@@ -163,9 +160,6 @@ export default function TimetableGenerator() {
             <span className="text-xl sm:text-2xl"></span>
             Select Academic Years & Semesters
           </h2>
-          <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
-            Choose years and their corresponding semesters for timetable generation
-          </p>
         </div>
 
         <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
@@ -237,7 +231,6 @@ export default function TimetableGenerator() {
         {selectedYears.length > 0 && (
           <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-200">
             <h3 className="font-semibold text-blue-900 mb-2 flex items-center gap-2 text-sm sm:text-base">
-              <span>📋</span>
               Selected Configuration
             </h3>
             <div className="flex flex-wrap gap-2">

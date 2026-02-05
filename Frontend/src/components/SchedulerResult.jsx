@@ -213,7 +213,7 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
     }
 
     if (!/^[0-9A-Za-z]+$/.test(division)) {
-      console.warn("⚠️ Invalid division format:", division, "- defaulting to 1");
+      console.warn(" Invalid division format:", division, "- defaulting to 1");
       division = "1";
     }
 
@@ -311,18 +311,17 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2">Generated Timetable</h2>
           <p className="text-sm sm:text-base text-gray-600">
             {criticalIssues.length > 0 
-              ? "🚨 Critical issues detected - cannot generate timetable"
+              ? "Critical issues detected - cannot generate timetable"
               : hasIssues 
                 ? "Review issues before finalizing" 
                 : "Timetable generated successfully"}
           </p>
         </div>
 
-        {/* 🚨 CRITICAL ISSUES REPORT */}
+        {/* CRITICAL ISSUES REPORT */}
         {criticalIssues.length > 0 && (
           <div className="bg-red-100 border-2 border-red-400 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-red-900 flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <span className="text-2xl sm:text-3xl">🚨</span>
               <span>Critical Issues ({criticalIssues.length})</span>
             </h2>
             <p className="text-sm sm:text-base text-red-800 mb-3 sm:mb-4 font-medium">
@@ -342,11 +341,10 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
         {hasBreakConflicts && (
           <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-400 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-red-900 flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <span className="text-2xl sm:text-3xl">⏰</span>
               <span>Break Interruption Detected ({breakInterruptedLabs.length} Lab{breakInterruptedLabs.length > 1 ? 's' : ''})</span>
             </h2>
             <p className="text-sm sm:text-base text-red-800 mb-3 sm:mb-4 font-medium">
-              🚫 The following continuous labs cannot be scheduled because breaks interrupt the required time slots:
+              The following continuous labs cannot be scheduled because breaks interrupt the required time slots:
             </p>
             
             <div className="space-y-3 sm:space-y-4">
@@ -373,7 +371,6 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
 
                   <div className="bg-red-50 p-3 sm:p-4 rounded-lg border border-red-200 mb-3 sm:mb-4">
                     <div className="flex items-start gap-2 sm:gap-3">
-                      <span className="text-xl sm:text-2xl flex-shrink-0">🚫</span>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-red-900 mb-1 sm:mb-2 text-sm sm:text-base">Conflict Details:</div>
                         <div className="text-xs sm:text-sm text-red-800 space-y-1">
@@ -413,7 +410,6 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
 
             <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-yellow-50 border border-yellow-300 rounded-lg">
               <div className="flex items-start gap-2 sm:gap-3">
-                <span className="text-xl sm:text-2xl flex-shrink-0">⚡</span>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-yellow-900 text-sm sm:text-base">Quick Fix:</div>
                   <div className="text-xs sm:text-sm text-yellow-800 mt-1">
@@ -429,11 +425,10 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
         {roomConflicts.length > 0 && (
           <div className="bg-orange-50 border-2 border-orange-300 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-orange-800 flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <span className="text-2xl sm:text-3xl">🏢</span>
               <span>Room Conflicts Detected ({roomConflicts.length})</span>
             </h2>
             <p className="text-sm sm:text-base text-orange-700 mb-3 sm:mb-4 font-medium">
-              🚫 The following rooms are already occupied at these times. Resolve conflicts before saving.
+              The following rooms are already occupied at these times. Resolve conflicts before saving.
             </p>
             <div className="bg-white rounded-lg sm:rounded-xl overflow-hidden shadow-md border border-orange-200">
               <div className="overflow-x-auto">
@@ -472,11 +467,11 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
         {conflicts.length > 0 && (
           <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-yellow-800 flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <span className="text-2xl sm:text-3xl">⚠️</span>
+              <span className="text-2xl sm:text-3xl"></span>
               <span>Teacher Conflicts Detected ({conflicts.length})</span>
             </h2>
             <p className="text-sm sm:text-base text-yellow-700 mb-3 sm:mb-4 font-medium">
-              🚫 The following teachers are assigned to multiple classes at the same time. Resolve conflicts before saving.
+              The following teachers are assigned to multiple classes at the same time. Resolve conflicts before saving.
             </p>
             <div className="bg-white rounded-lg sm:rounded-xl overflow-hidden shadow-md border border-yellow-200">
               <div className="overflow-x-auto">
@@ -524,11 +519,10 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
         {unallocated.length > 0 && (
           <div className="bg-amber-50 border-2 border-amber-300 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-800 flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <span className="text-2xl sm:text-3xl">📋</span>
               <span>Unallocated Sessions ({unallocated.length})</span>
             </h2>
             <p className="text-sm sm:text-base text-amber-700 mb-3 sm:mb-4 font-medium">
-              ℹ️ These sessions could not be scheduled due to constraints:
+              These sessions could not be scheduled due to constraints:
             </p>
             <div className="space-y-3 sm:space-y-4">
               {unallocated.map((item, i) => (
@@ -650,13 +644,13 @@ const defaultSave = async (outerKey, table, isTeacher = false) => {
               }`}
             >
               {!canSave 
-                ? "🔒 Resolve Issues to Save All" 
-                : "💾 Save All Class Timetables"}
+                ? "Resolve Issues to Save All" 
+                : "Save All Class Timetables"}
             </button>
             
             {unallocated.length > 0 && canSave && (
               <p className="text-sm text-amber-600 text-center mt-3">
-                ⚠️ Warning: Saving with {unallocated.length} unallocated session(s). Consider adjusting configuration.
+                 Warning: Saving with {unallocated.length} unallocated session(s). Consider adjusting configuration.
               </p>
             )}
           </div>

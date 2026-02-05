@@ -126,14 +126,17 @@ const AddRoom = () => {
 
   const handleDeleteRoom = async (id) => {
     try {
+      // Ensure the ID is valid
+      if (!id) return;
+      
       const { data } = await axios.delete(`/api/rooms/delete/${id}`);
       if (data.success) {
         toast.success("Room deleted");
-        fetchRooms();
+        // Critical: Re-fetch to update UI
+        fetchRooms(); 
       }
     } catch (err) {
-      console.error(" Delete error:", err);
-      toast.error("Failed to delete room");
+      toast.error("Failed to delete: " + (err.response?.data?.message || "Server Error"));
     }
   };
 
@@ -246,10 +249,7 @@ const AddRoom = () => {
                 <option key={year} value={year}>{year}</option>
               ))}
             </select>
-            <div className="mt-3 space-y-1 text-xs text-blue-700">
-              <p><strong>Specific Year:</strong> Room appears only for that year in Wizard Step 3</p>
-              <p><strong>Shared:</strong> Room available for ALL years</p>
-            </div>
+
           </div>
 
           {/* Submit Button */}
@@ -338,20 +338,20 @@ const AddRoom = () => {
                     </td>
                     <td className="p-3">
                     <span
-  className={`px-2 py-1 rounded text-xs font-semibold border ${
-    r.primaryYear === "Shared"
-      ? "bg-blue-100 text-blue-700 border-blue-200"
-      : "bg-cyan-100 text-cyan-700 border-cyan-200"
-  }`}
->
-  {r.primaryYear}
-</span>
+                      className={`px-2 py-1 rounded text-xs font-semibold border ${
+                        r.primaryYear === "Shared"
+                          ? "bg-blue-100 text-blue-700 border-blue-200"
+                          : "bg-cyan-100 text-cyan-700 border-cyan-200"
+                      }`}
+                    >
+                      {r.primaryYear}
+                    </span>
 
                     </td>
                     <td className="p-3">
                       <button
                         onClick={() => confirmDeleteRoom(r._id)}
-                        className="px-3 py-1 text-xs rounded bg-red-600 hover:bg-red-700 text-white transition-colors font-semibold"
+                        className="px-2 sm:px-3 py-1 text-red-600 hover:bg-red-100 rounded text-m sm:text-sm font-medium transition-colors whitespace-nowrap"
                       >
                         Delete
                       </button>

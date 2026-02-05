@@ -107,7 +107,6 @@ export function renderTimetableCell(cell, options = {}) {
               {showYearDivision && entry.year && (
                 <div className="mt-1 pt-1 border-t border-gray-200">
                   <div className="flex items-center gap-1.5 text-[8px] sm:text-[9px] font-medium text-gray-500">
-                    <span className="opacity-70">📚</span>
                     <span>{entry.year} – Div {entry.division}</span>
                   </div>
                 </div>

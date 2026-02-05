@@ -69,7 +69,6 @@ export default function TeacherTimetable() {
   <div className="w-20 h-20 rounded-full
                   bg-gradient-to-br from-blue-100 to-cyan-100
                   flex items-center justify-center mb-6">
-    <span className="text-4xl">📅</span>
   </div>
 
   {/* Title */}
@@ -92,7 +91,6 @@ export default function TeacherTimetable() {
                shadow-lg hover:shadow-xl
                transition-all flex items-center gap-2"
   >
-    <span>⚡</span>
     Generate Your First Timetable
   </button>
 

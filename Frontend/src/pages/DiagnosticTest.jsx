@@ -157,14 +157,14 @@ export default function DiagnosticTest() {
               disabled={testing}
               className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {testing ? "Running Tests..." : "🔬 Run All Tests"}
+              {testing ? "Running Tests..." : "Run All Tests"}
             </button>
             {results.length > 0 && (
               <button
                 onClick={copyResults}
                 className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700"
               >
-                📋 Copy Results
+                Copy Results
               </button>
             )}
           </div>
@@ -272,7 +272,7 @@ export default function DiagnosticTest() {
         {/* Quick Fixes */}
         <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 mt-6">
           <h2 className="text-xl font-bold text-blue-900 mb-4">
-            ⚡ Quick Fixes
+            Quick Fixes
           </h2>
           <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
             <li>Make sure you're logged in as admin at /admin/login</li>

@@ -171,7 +171,7 @@ import { toast } from "react-toastify";
         });
       });
       
-      console.log("📦 Final room mappings:", mappings);
+      console.log("Final room mappings:", mappings);
       return mappings;
     };
 
@@ -192,17 +192,17 @@ import { toast } from "react-toastify";
         });
         
         if (validationErrors.length > 0) {
-          toast.error("⚠️ Configuration Errors:\n\n" + validationErrors.join("\n"));
+          toast.error("Configuration Errors:\n\n" + validationErrors.join("\n"));
           return;
         }
         
         if (!teachers || teachers.length === 0) {
-          toast.error("⚠️ No teachers defined. Please add at least one teacher.");
+          toast.error("No teachers defined. Please add at least one teacher.");
           return;
         }
         
         if (!rooms || rooms.length === 0) {
-          toast.error("⚠️ No rooms defined. Please add at least one room.");
+          toast.error("No rooms defined. Please add at least one room.");
           return;
         }
 
@@ -346,7 +346,6 @@ import { toast } from "react-toastify";
                   onClick={handleExportConfig}
                   className="px-2.5 sm:px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg text-white font-medium text-xs sm:text-sm border border-white/30 hover:bg-white/30 transition-all flex items-center gap-2"
                 >
-                  <span>💾</span>
                   <span className="hidden sm:inline">Export Config</span>
                   <span className="sm:hidden">Export</span>
                 </button>

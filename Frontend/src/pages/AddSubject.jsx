@@ -76,56 +76,36 @@ export default function AddSubject() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Build components array
-    const components = [];
     
-    if (hasTheory) {
-      components.push({
-        type: "Theory",
-        hours: theoryHours,
-        batches: 1,
-        labDuration: 0
-      });
-    }
-
+    const components = [];
+    if (hasTheory) components.push({ type: "Theory", hours: theoryHours, batches: 1, labDuration: 0 });
     if (hasLabTutorial) {
-      components.push({
-        type: labTutorialType,
-        hours: labTutorialHours,
-        batches: batches,
-        labDuration: labTutorialType === "Lab" ? labDuration : 0
+      components.push({ 
+        type: labTutorialType, 
+        hours: labTutorialHours, 
+        batches: batches, 
+        labDuration: labTutorialType === "Lab" ? labDuration : 0 
       });
-    }
-
-    if (components.length === 0) {
-      toast.error("Subject must have at least one component (Theory, Lab, or Tutorial)");
-      return;
     }
 
     const payload = {
-      ...formData,
+      ...formData, // This contains code, name, year, semester
       components
     };
 
     try {
-      if (editMode) {
-        const { data } = await axios.put(`/api/subjects/update/${editingId}`, payload);
-        if (data.success) {
-          toast.success("Subject updated successfully!");
-          fetchSubjects();
-          resetForm();
-        }
-      } else {
-        const { data } = await axios.post("/api/subjects/add", payload);
-        if (data.success) {
-          toast.success("Subject added successfully!");
-          fetchSubjects();
-          resetForm();
-        }
+      const url = editMode ? `/api/subjects/update/${editingId}` : "/api/subjects/add";
+      const method = editMode ? "put" : "post";
+      
+      const { data } = await axios[method](url, payload);
+      
+      if (data.success) {
+        toast.success(editMode ? "Updated!" : "Added!");
+        fetchSubjects();
+        resetForm();
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to save subject");
+      toast.error(error.response?.data?.message || "Save failed");
     }
   };
 
@@ -205,7 +185,7 @@ export default function AddSubject() {
   const getTypeColor = (type) => {
     switch (type) {
       case "Theory": return "bg-blue-100 text-blue-700";
-      case "Lab": return "bg-blue-100 text-blue-700";
+      case "Lab": return "bg-purple-100 text-purple-700";
       case "Tutorial": return "bg-green-100 text-green-700";
       default: return "bg-gray-100 text-gray-700";
     }
@@ -302,7 +282,7 @@ export default function AddSubject() {
                   onChange={(e) =>
                     setFormData({ ...formData, code: e.target.value.toUpperCase() })
                   }
-                  disabled={editMode}
+                  // disabled={editMode}
                   className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                   required
                 />
@@ -527,14 +507,14 @@ export default function AddSubject() {
                     <div className="flex gap-2 w-full sm:w-auto sm:ml-4">
                       <button
                         onClick={() => handleEdit(subject)}
-                        className="flex-1 sm:flex-initial px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-xs sm:text-sm font-semibold whitespace-nowrap"
+                        className="px-2 sm:px-3 py-1 text-blue-600 hover:bg-blue-100 rounded text-m sm:text-sm font-medium transition-colors whitespace-nowrap"
                         title="Edit subject"
                       >
                          Edit
                       </button>
                       <button
                         onClick={() => handleDelete(subject._id)}
-                        className="flex-1 sm:flex-initial px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all text-xs sm:text-sm font-semibold whitespace-nowrap"
+                        className="px-2 sm:px-3 py-1 text-red-600 hover:bg-red-100 rounded text-m sm:text-sm font-medium transition-colors whitespace-nowrap"
                         title="Delete subject"
                       >
                          Delete
@@ -546,7 +526,6 @@ export default function AddSubject() {
             </div>
           ) : (
             <div className="text-center py-6 sm:py-8 bg-gray-50 rounded-lg sm:rounded-xl border-2 border-dashed border-gray-300 px-4">
-              <span className="text-3xl sm:text-4xl mb-2 block">📚</span>
               <p className="text-sm sm:text-base text-gray-500 font-medium">No subjects found</p>
               <p className="text-xs sm:text-sm text-gray-400 mt-1">
                 Add subjects using the form above

@@ -91,9 +91,11 @@ export default function SavedTimetable() {
 
   if (loading)
     return (
-      <div className="p-6 flex flex-col items-center justify-center">
+      <div className="p-6 flex flex-col items-center justify-center min-h-screen">
         <div className="h-10 w-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-3 text-blue-600 font-medium">Fetching data…</p>
+        <p className="mt-3 text-blue-600 font-medium">
+          Fetching timetables…
+        </p>
       </div>
     );
 
@@ -110,7 +112,6 @@ export default function SavedTimetable() {
   <div className="w-20 h-20 rounded-full
                   bg-gradient-to-br from-blue-100 to-cyan-100
                   flex items-center justify-center mb-6">
-    <span className="text-4xl">📅</span>
   </div>
 
   {/* Title */}
@@ -133,7 +134,6 @@ export default function SavedTimetable() {
                shadow-lg hover:shadow-xl
                transition-all flex items-center gap-2"
   >
-    <span>⚡</span>
     Generate Your First Timetable
   </button>
 

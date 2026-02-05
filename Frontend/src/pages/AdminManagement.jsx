@@ -300,6 +300,7 @@ const handleDeleteAdmin = (adminId) => {
                 <input
                   type="text"
                   value={formData.name}
+                  placeholder="Enter the name"
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   required
@@ -311,10 +312,12 @@ const handleDeleteAdmin = (adminId) => {
                 <input
                   type="email"
                   value={formData.email}
+                  placeholder="Enter the email"
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  // autoComplete="off" // Prevents browser auto-fill
                   required
-                  disabled={!!editingAdmin}
+                  // disabled={!!editingAdmin}
                 />
               </div>
 
@@ -338,6 +341,7 @@ const handleDeleteAdmin = (adminId) => {
                   onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   required
+                  disabled={!!editingAdmin}
                 >
                   <option value="">Select Department</option>
                   {departments.map((dept) => (

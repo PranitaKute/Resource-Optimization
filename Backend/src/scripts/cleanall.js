@@ -25,7 +25,7 @@ async function cleanupOldTimetables() {
     console.log(`📊 Found ${oldTimetables.length} old timetables\n`);
 
     if (oldTimetables.length > 0) {
-      console.log("⚠️  These timetables will be deleted:");
+      console.log("  These timetables will be deleted:");
       oldTimetables.forEach((tt, idx) => {
         console.log(`   ${idx + 1}. ${tt.year} - Div ${tt.division} (ID: ${tt._id})`);
       });
@@ -45,7 +45,7 @@ async function cleanupOldTimetables() {
     }
 
     console.log("\n Cleanup completed successfully!");
-    console.log("\n📋 Next steps:");
+    console.log("\n Next steps:");
     console.log("1. Verify cleanup by checking the database");
     console.log("2. Generate new timetables with department field");
     console.log("3. Each admin will now see only their department's timetables");

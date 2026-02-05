@@ -137,7 +137,6 @@ const getTypeColor = (type) => {
           {/* TIME CONFIGURATION SECTION */}
           <div className="mb-6 sm:mb-8 p-4 sm:p-5 md:p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg sm:rounded-xl border-2 border-blue-200">
             <h4 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
-              <span>🕒</span>
               Time Configuration
             </h4>
 
@@ -445,18 +444,15 @@ const getTypeColor = (type) => {
                           </div>
                           <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1 text-xs sm:text-sm text-gray-600">
                             <span className="flex items-center gap-1">
-                              <span>⏰</span>
                               {s.hours} hrs/week
                             </span>
                             {s.type === "Lab" && s.labDuration && (
                               <span className="flex items-center gap-1 bg-blue-100 text-blue-700 px-1.5 sm:px-2 py-0.5 rounded font-semibold text-xs sm:text-sm">
-                                <span>🕒</span>
                                 {s.labDuration}h continuous
                               </span>
                             )}
                             {s.type !== "Theory" && (
                               <span className="flex items-center gap-1">
-                                <span>👥</span>
                                 {s.batches} batch{s.batches > 1 ? "es" : ""}
                               </span>
                             )}
@@ -469,7 +465,6 @@ const getTypeColor = (type) => {
               </div>
             ) : (
               <div className="text-center py-6 sm:py-8 bg-gray-50/50 rounded-lg sm:rounded-xl border-2 border-dashed border-gray-300 px-4">
-                <span className="text-3xl sm:text-4xl mb-2 block">📚</span>
                 <p className="text-sm sm:text-base text-gray-500 font-medium">
                   No subjects found
                 </p>

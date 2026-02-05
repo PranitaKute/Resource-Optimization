@@ -18,6 +18,7 @@ const AddTeacher = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [updateName, setUpdateName] = useState("");
+  const [updateEmail, setUpdateEmail] = useState(""); // Add this
 
   // Get admin's department - teachers automatically assigned to this department
   const department = adminData?.department || "";
@@ -71,6 +72,7 @@ const AddTeacher = () => {
   const openUpdateModal = (teacher) => {
     setSelectedTeacher(teacher);
     setUpdateName(teacher.name);
+    setUpdateEmail(teacher.email);
     setShowModal(true);
   };
 
@@ -83,7 +85,7 @@ const AddTeacher = () => {
     try {
       const { data } = await axios.put(
         `/api/teacher/update/${selectedTeacher._id}`,
-        { name: updateName },
+        { name: updateName, email: updateEmail },
         { withCredentials: true }
       );
 
@@ -153,7 +155,7 @@ const AddTeacher = () => {
         {/* ADD TEACHER */}
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 md:mb-10 border">
           <h2 className="text-xl sm:text-2xl font-semibold text-slate-800 mb-4 sm:mb-6">
-            👥 Add Teacher
+            Add Teacher
           </h2>
 
           {/* Department Info */}
@@ -200,7 +202,7 @@ const AddTeacher = () => {
               disabled={loading}
               className="sm:col-span-2 lg:col-span-3 mt-2 py-2.5 sm:py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition text-white font-semibold disabled:opacity-60 text-sm sm:text-base"
             >
-              {loading ? "Adding..." : "➕ Add Teacher"}
+              {loading ? "Adding..." : "Add Teacher"}
             </button>
           </form>
         </div>
@@ -208,7 +210,7 @@ const AddTeacher = () => {
         {/* TEACHERS TABLE */}
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border">
           <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-slate-800">
-            📋 Teachers List ({teachers.length})
+            Teachers List ({teachers.length})
           </h3>
 
           <div className="overflow-x-auto -mx-4 sm:mx-0">
@@ -242,15 +244,15 @@ const AddTeacher = () => {
                           <div className="flex justify-center gap-1.5 sm:gap-2">
                             <button
                               onClick={() => openUpdateModal(t)}
-                              className="px-2 sm:px-3 py-1 text-xs rounded bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                              className="px-2 sm:px-3 py-1 text-blue-600 hover:bg-blue-100 rounded text-m sm:text-sm font-medium transition-colors whitespace-nowrap"
                             >
-                              ✏️ Edit
+                              Edit
                             </button>
                             <button
                               onClick={() => confirmDeleteTeacher(t._id, t.name)}
-                              className="px-2 sm:px-3 py-1 text-xs rounded bg-red-600 hover:bg-red-700 text-white transition-colors"
+                              className="px-2 sm:px-3 py-1 text-red-600 hover:bg-red-100 rounded text-m sm:text-sm font-medium transition-colors whitespace-nowrap"
                             >
-                              🗑️ Delete
+                              Delete
                             </button>
                           </div>
                         </td>
@@ -268,7 +270,7 @@ const AddTeacher = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md">
-            <h3 className="text-lg sm:text-xl font-semibold mb-4">✏️ Update Teacher</h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-4">Update Teacher</h3>
 
             <input
               type="text"
@@ -278,11 +280,16 @@ const AddTeacher = () => {
               className="w-full mb-3 px-3 py-2 text-sm sm:text-base rounded bg-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
+            <input
+              type="email"
+              value={updateEmail}
+              onChange={(e) => setUpdateEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full mb-3 px-3 py-2 text-sm sm:text-base rounded bg-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
 
             <div className="mb-3 p-2 bg-gray-50 rounded">
-              <p className="text-xs text-gray-600">
-                <strong>Email:</strong> {selectedTeacher?.email}
-              </p>
               <p className="text-xs text-gray-600">
                 <strong>Department:</strong> {selectedTeacher?.department}
               </p>
@@ -299,7 +306,7 @@ const AddTeacher = () => {
                 onClick={handleUpdateTeacher}
                 className="px-4 py-2 text-sm sm:text-base rounded bg-blue-600 hover:bg-blue-700 text-white transition-colors"
               >
-                💾 Update
+                Update
               </button>
             </div>
           </div>

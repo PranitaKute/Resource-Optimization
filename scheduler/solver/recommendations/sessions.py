@@ -23,7 +23,7 @@ def generate_enhanced_recommendations(unallocated_sessions, lab_conflicts, class
         # PRIORITY 1: Break interruption for continuous labs
         if break_conflict and break_conflict.get('reason') == 'break_interruption':
             suggestions.append(
-                f"🚨 BREAK CONFLICT: {session['subject']} requires {break_conflict['total_duration']}-hour "
+                f"BREAK CONFLICT: {session['subject']} requires {break_conflict['total_duration']}-hour "
                 f"continuous slot but break at {break_conflict['break_slot']} interrupts it. "
                 f"SOLUTION: Move break to before or after this time window on {break_conflict['day']}."
             )
@@ -40,12 +40,12 @@ def generate_enhanced_recommendations(unallocated_sessions, lab_conflicts, class
         
         if len(qualified_teachers) == 0:
             suggestions.append(
-                f"⚠️ CRITICAL: No teachers qualified to teach {session['subject']}. "
+                f" CRITICAL: No teachers qualified to teach {session['subject']}. "
                 f"Add qualified teacher immediately."
             )
         elif len(qualified_teachers) == 1:
             suggestions.append(
-                f"⚠️ Only 1 teacher available for {session['subject']}. "
+                f" Only 1 teacher available for {session['subject']}. "
                 f"Consider adding another qualified teacher for flexibility."
             )
         
@@ -55,7 +55,7 @@ def generate_enhanced_recommendations(unallocated_sessions, lab_conflicts, class
             
             if len(available_rooms) < 2:
                 suggestions.append(
-                    f"⚠️ Limited lab rooms ({len(available_rooms)} available). "
+                    f" Limited lab rooms ({len(available_rooms)} available). "
                     f"Consider adding more lab rooms."
                 )
             

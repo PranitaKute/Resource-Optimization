@@ -8,11 +8,11 @@ import userModel from "./models/userModel.js";
 
 async function migrateTeachers() {
   try {
-    console.log("🔄 Connecting to database...");
+    console.log("Connecting to database...");
     await mongoose.connect(process.env.MONGODB_URI);
     console.log(" Connected to database");
 
-    console.log("\n📊 Checking teachers...");
+    console.log("\nChecking teachers...");
     
     // Find all teachers
     const teachers = await userModel.find({ role: "teacher" });
@@ -30,7 +30,7 @@ async function migrateTeachers() {
         console.log(` Updated: ${teacher.name} - Added empty subjects array`);
         updatedCount++;
       } else {
-        console.log(`⏭️  Skipped: ${teacher.name} - Already has subjects field (${teacher.subjects.length} subjects)`);
+        console.log(`Skipped: ${teacher.name} - Already has subjects field (${teacher.subjects.length} subjects)`);
         skippedCount++;
       }
     }
@@ -42,7 +42,7 @@ async function migrateTeachers() {
     console.log(`  Skipped: ${skippedCount}`);
     console.log("=".repeat(60));
 
-    console.log("\n⚠️  IMPORTANT: Now you need to assign subjects to teachers!");
+    console.log("\nIMPORTANT: Now you need to assign subjects to teachers!");
     console.log("   Option 1: Update via admin interface");
     console.log("   Option 2: Run the subject assignment script");
     console.log("   Option 3: Manually update in MongoDB");

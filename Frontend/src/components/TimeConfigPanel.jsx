@@ -96,7 +96,6 @@ export default function TimeConfigPanel({ timeConfig, setTimeConfig }) {
     <div className="bg-white/90 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl border border-gray-100">
       <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
         <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-          <span className="text-white text-xl sm:text-2xl">⏰</span>
         </div>
         <div className="flex-1 min-w-0">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">Time Slot Configuration</h2>
@@ -174,7 +173,6 @@ export default function TimeConfigPanel({ timeConfig, setTimeConfig }) {
       {/* Preview */}
       <div className="bg-gradient-to-br from-blue-50/80 to-cyan-50/80 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 border border-blue-200">
         <h3 className="font-bold text-sm sm:text-base text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
-          <span>📅</span>
           Daily Schedule Preview
         </h3>
 

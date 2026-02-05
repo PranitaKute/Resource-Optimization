@@ -65,7 +65,6 @@ export default function IndividualTeacherTimetable() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100">
         <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-          <span className="text-6xl mb-4 block">📚</span>
           <p className="text-gray-500 text-lg">No timetable found</p>
         </div>
       </div>

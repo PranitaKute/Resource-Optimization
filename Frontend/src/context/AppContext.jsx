@@ -48,7 +48,9 @@ export const AppProvider = ({ children }) => {
   // USER AUTHENTICATION
   const checkUserAuth = async () => {
     try {
-      const res = await axiosInstance.get("/api/auth/is-auth");
+      if(isLoggedIn){
+        const res = await axiosInstance.get("/api/auth/me");
+      }
       if (res.data.success && res.data.isLoggedIn) {
         setIsLoggedIn(true);
         await getUserData();
@@ -60,6 +62,7 @@ export const AppProvider = ({ children }) => {
       setIsLoggedIn(false);
       setUserData(null);
     }
+    console.log("User authentication check complete");  
   };
 
   const getUserData = async () => {

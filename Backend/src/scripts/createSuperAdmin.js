@@ -15,7 +15,7 @@ async function createSuperadmin() {
     const SUPERADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
     const SUPERADMIN_NAME = process.env.ADMIN_NAME || "Super Administrator";
 
-    console.log("\n📋 Credentials from .env:");
+    console.log("\nCredentials from .env:");
     console.log(`   Email: ${SUPERADMIN_EMAIL}`);
     console.log(`   Password: ${SUPERADMIN_PASSWORD}`);
     console.log(`   Name: ${SUPERADMIN_NAME}`);
@@ -24,10 +24,10 @@ async function createSuperadmin() {
     const existingSuperadmin = await userModel.findOne({ role: "superadmin" });
     
     if (existingSuperadmin) {
-      console.log("\n⚠️  Superadmin already exists!");
+      console.log("\nSuperadmin already exists!");
       console.log(`   Current Email: ${existingSuperadmin.email}`);
       console.log(`   Current Name: ${existingSuperadmin.name}`);
-      console.log("\n🔄 Updating credentials to match .env...");
+      console.log("\nUpdating credentials to match .env...");
       
       // UPDATE existing superadmin with new credentials
       const hashedPassword = await bcrypt.hash(SUPERADMIN_PASSWORD, 10);
@@ -38,14 +38,14 @@ async function createSuperadmin() {
       await existingSuperadmin.save();
       
       console.log(" Superadmin credentials updated successfully!");
-      console.log("\n🎯 Login with:");
+      console.log("\nLogin with:");
       console.log(`   Email: ${SUPERADMIN_EMAIL}`);
       console.log(`   Password: ${SUPERADMIN_PASSWORD}`);
       process.exit(0);
     }
 
     // Create new superadmin
-    console.log("\n🔐 Creating New Superadmin Account...");
+    console.log("\nCreating New Superadmin Account...");
     const hashedPassword = await bcrypt.hash(SUPERADMIN_PASSWORD, 10);
 
     const superadmin = await userModel.create({
@@ -59,11 +59,11 @@ async function createSuperadmin() {
     });
 
     console.log("\n Superadmin created successfully!");
-    console.log("\n🎯 Login Credentials:");
+    console.log("\nLogin Credentials:");
     console.log(`   Email: ${SUPERADMIN_EMAIL}`);
     console.log(`   Password: ${SUPERADMIN_PASSWORD}`);
     console.log("\n Login URL: http://localhost:8080/admin/login");
-    console.log("\n⚠️  IMPORTANT: Change the password after first login!");
+    console.log("\nIMPORTANT: Change the password after first login!");
 
   } catch (error) {
     console.error(" Error:", error.message);

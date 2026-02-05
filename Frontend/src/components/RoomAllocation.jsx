@@ -444,7 +444,7 @@ export default function RoomAllocation({
             <button
               onClick={addRoomWithAssignments}
               disabled={selectedAssignments.length === 0}
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold shadow-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-violet-600 to-emerald-500 text-white font-bold shadow-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               Add Assignment ({selectedAssignments.length} selected)
             </button>

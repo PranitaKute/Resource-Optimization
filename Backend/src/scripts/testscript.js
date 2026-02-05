@@ -19,8 +19,8 @@ const COLORS = {
 
 const SUCCESS = `${COLORS.green}${COLORS.reset}`;
 const FAIL = `${COLORS.red}${COLORS.reset}`;
-const WARN = `${COLORS.yellow}⚠️${COLORS.reset}`;
-const INFO = `${COLORS.blue}ℹ️${COLORS.reset}`;
+const WARN = `${COLORS.yellow}${COLORS.reset}`;
+const INFO = `${COLORS.blue}ℹ${COLORS.reset}`;
 
 console.log(`
 ╔════════════════════════════════════════════════════════════╗
